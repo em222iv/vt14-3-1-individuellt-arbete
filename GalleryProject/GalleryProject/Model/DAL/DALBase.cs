@@ -4,10 +4,8 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Configuration;
+using GalleryProject.Model;
 
-/// <summary>
-/// Summary description for DALBase
-/// </summary>
 namespace GalleryProject
 {
     public abstract class DALBase
@@ -16,9 +14,7 @@ namespace GalleryProject
 
         static DALBase()
         {
-
             _connectionString = WebConfigurationManager.ConnectionStrings["GalleryConnectionString"].ConnectionString;
-
         }
 
         protected static SqlConnection CreateConnection()
