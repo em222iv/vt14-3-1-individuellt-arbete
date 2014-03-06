@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="WebApplication1.WebForm1" ViewStateMode="Disabled" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" ViewStateMode="Disabled"%>
 
 <!DOCTYPE html>
 
@@ -29,10 +29,10 @@
         </div>
         <div id="hejhopp">
             <div id="fileBrowser"><asp:FileUpload ID="fileBrowse" runat="server" AllowMultiple="True" /></div>
-            <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="Choose a picture to upload" ControlToValidate="fileBrowse"></asp:RequiredFieldValidator>
-            <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ErrorMessage="*JPG/JPEG/GIF files only" ValidationExpression="^.+\.(([jJ][pP][eE]?[gG])|([gG][iI][fF])|([pP][nN][gG]))$"  ControlToValidate="fileBrowse"></asp:RegularExpressionValidator>
-            <div id="uploadButton"><asp:Button ID="Button" runat="server" Text="uploadPic" OnClick="Button_Click" /></div>
-            <div id="deleteButton"><asp:Button ID="Button1" runat="server" Text="deletePic" OnClick="deleteButton_Click" causesValidation="false"/></div>
+           <%-- <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="Choose a picture to upload" ControlToValidate="fileBrowse"></asp:RequiredFieldValidator>
+            <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ErrorMessage="*JPG/JPEG/GIF files only" ValidationExpression="^.+\.(([jJ][pP][eE]?[gG])|([gG][iI][fF])|([pP][nN][gG]))$"  ControlToValidate="fileBrowse"></asp:RegularExpressionValidator> --%>
+            <div id="uploadButton"><asp:Button ID="Button" runat="server" Text="uploadPic" /></div>
+            <div id="deleteButton"><asp:Button ID="Button1" runat="server" Text="deletePic"  causesValidation="false"/></div>
         </div>
     </div>
     </form>
