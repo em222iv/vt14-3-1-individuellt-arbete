@@ -38,6 +38,13 @@ namespace GalleryProject.Pages.CustomerPages
                  Session.Remove("deleteSuccess");
              }
         }
+
+        public IEnumerable<Category> CategoryListView()
+        {
+            return Service.GetCategories();
+        }
+
+
         public IEnumerable<Picture> PictureListView_GetData()
         {
             return Service.GetPictures();
@@ -55,7 +62,7 @@ namespace GalleryProject.Pages.CustomerPages
                     var filename = fileBrowse.FileName;
                     Service.SavePicture(picture, file, filename);
                     Session["insertSuccess"] = true;
-                    Response.Redirect("~/Pages/CustomerPages/WebForm3.aspx");
+                    Response.Redirect("~/Pages/CustomerPages/WebForm2.aspx");
                 //}
                 //catch (Exception)
                 //{
@@ -83,9 +90,9 @@ namespace GalleryProject.Pages.CustomerPages
                 Service.SavePicture(picture, file, filename);
 
                 IsUploadSuccess = true;
-                Response.Redirect("?" + filename);
+                Response.Redirect("~/Pages/CustomerPages/WebForm2.aspx");
             }
-            Response.Redirect("~/Pages/CustomerPages/WebForm3.aspx");
+            
 
             //}
             //catch (Exception)
@@ -95,16 +102,16 @@ namespace GalleryProject.Pages.CustomerPages
         }
         public void PictureListView_DeleteItem(int pictureID) // Parameterns namn måste överrensstämma med värdet DataKeyNames har.
         {
-            //try
-            //{
-            //    Service.DeletePicture(pictureID);
-            //    Session["deleteSuccess"] = true;
-            //    Response.Redirect("~/Pages/CustomerPages/WebForm3.aspx");
-            //}
-            //catch (Exception)
-            //{
-            //    ModelState.AddModelError(String.Empty, "Ett oväntat fel inträffade då kunduppgiften skulle tas bort.");
-            //}
+            try
+            {
+                Service.DeletePicture(pictureID);
+                Session["deleteSuccess"] = true;
+                Response.Redirect("~/Pages/CustomerPages/WebForm2.aspx");
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError(String.Empty, "Ett oväntat fel inträffade då kunduppgiften skulle tas bort.");
+            }
         }
     }
 }

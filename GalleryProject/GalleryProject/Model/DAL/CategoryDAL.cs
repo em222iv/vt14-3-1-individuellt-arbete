@@ -7,10 +7,10 @@ using GalleryProject.Model;
 
 namespace GalleryProject.Model
 {
-    public class PictureDAL : DALBase
+    public class CategoryDAL : DALBase
     {
 
-        public Picture GetPicture(int pictureID)
+        public Category GetCategory(int categoryID)
         {
 
             using (SqlConnection conn = CreateConnection())
@@ -18,11 +18,11 @@ namespace GalleryProject.Model
                 //try
                 //{
                 //starta ett sqlcommand som sendan sparas undan för att kunna exekveras
-                SqlCommand cmd = new SqlCommand("AppSchema.usp_GetPicture", conn);
+                SqlCommand cmd = new SqlCommand("AppSchema.GetCategory", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 //skjuter in @ContactID så att den lagrade proceduren hittar.
-                cmd.Parameters.AddWithValue("@PictureID", pictureID);
+                cmd.Parameters.AddWithValue("@CategoryID", categoryID);
 
                 // öppnar conn strängen
                 conn.Open();
@@ -36,15 +36,13 @@ namespace GalleryProject.Model
                     if (reader.Read())
                     {
                         // getordinal hämtar index
-                        var pictureIdIndex = reader.GetOrdinal("PictureID");
-                        var pictureNameIndex = reader.GetOrdinal("PictureName");
-                        var categoryNameIndex = reader.GetOrdinal("CatergoryID");
+                        var categoryIdIndex = reader.GetOrdinal("CategoryID");
+                        var categoryNameIndex = reader.GetOrdinal("CategoryName");
 
-                        return new Picture
+                        return new Category
                         {
-                            PictureID = reader.GetInt32(pictureIdIndex),
-                            PictureName = reader.GetString(pictureNameIndex),
-                            CategoryID = reader.GetInt32(categoryNameIndex)
+                            CategoryID = reader.GetInt32(categoryIdIndex),
+                            CategoryName = reader.GetString(categoryNameIndex),
 
                         };
                     }
@@ -60,18 +58,18 @@ namespace GalleryProject.Model
         }
 
 
-        public IEnumerable<Picture> GetPictures()
+        public IEnumerable<Category> GetCategories()
         {
             using (var conn = CreateConnection())
             {
                 //try
                 //{
                     //Skapar det List-objekt som initialt har plats för 100 referenser till Customer-objekt.
-                    var Pictures = new List<Picture>(10);
+                    var Categories = new List<Category>(10);
 
                     // Skapar och initierar ett SqlCommand-objekt som används till att 
                     // exekveras specifierad lagrad procedur.
-                    var cmd = new SqlCommand("AppSchema.usp_AllFromPictureTable", conn);
+                    var cmd = new SqlCommand("AppSchema.usp_SelectALLFromCategoryTable", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     // Öppnar anslutningen till databasen.
@@ -79,27 +77,25 @@ namespace GalleryProject.Model
 
                     using (var reader = cmd.ExecuteReader())
                     {
-                        var galleryIdIndex = reader.GetOrdinal("PictureID");
-                        var galleryNameIndex = reader.GetOrdinal("PictureName");
-                        var categoryNameIndex = reader.GetOrdinal("CatergoryID");
+                        var categoryIdIndex = reader.GetOrdinal("CategoryID");
+                        var categoryNameIndex = reader.GetOrdinal("CategoryName");
 
                         while (reader.Read())
                         {
                             // Hämtar ut datat för en post.
                             // Du måste känna till SQL-satsen för att kunna välja rätt GetXxx-metod!!!!
-                            Pictures.Add(new Picture
+                            Categories.Add(new Category
                             {
-                                PictureID = reader.GetInt32(galleryIdIndex),
-                                PictureName = reader.GetString(galleryNameIndex),
-                                CategoryID = reader.GetInt32(categoryNameIndex)
+                                CategoryID = reader.GetInt32(categoryIdIndex),
+                                CategoryName = reader.GetString(categoryNameIndex),
                             });
                         }
                     }
 
-                    Pictures.TrimExcess();
+                    Categories.TrimExcess();
 
                     // Returnerar referensen till List-objektet med referenser med Customer-objekt.
-                    return Pictures;
+                    return Categories;
                 //}
                 //catch
                 //{
@@ -108,45 +104,50 @@ namespace GalleryProject.Model
             }
         }
 
-        public void InsertPicture(Picture picture)
+        public void InsertCategory(Category category)
         {
             // Skapar och initierar ett anslutningsobjekt.
             using (SqlConnection conn = CreateConnection())
             {
-                //try
-                //{
+                try
+                {
 
-                    SqlCommand cmd = new SqlCommand("AppSchema.usp_InsertPicture", conn);
+                    SqlCommand cmd = new SqlCommand("AppSchema.InsertCategory", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@PictureName", SqlDbType.VarChar, 30).Value = picture.PictureName;
-                    cmd.Parameters.Add("@PictureID", SqlDbType.Int, 4).Direction = ParameterDirection.Output;
-                    cmd.Parameters.Add("@CatergoryID", SqlDbType.Int, 4).Value = picture.CategoryID;
+                    cmd.Parameters.Add("@CategoryName", SqlDbType.VarChar, 30).Value = category.CategoryName;
+                    cmd.Parameters.Add("@CategoryID", SqlDbType.Int, 4).Direction = ParameterDirection.Output;
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
 
-                    picture.PictureID = (int)cmd.Parameters["@PictureID"].Value;
-                //}
-                //catch
-                //{
-                //    // Kastar ett eget undantag om ett undantag kastas.
-                //    throw new ApplicationException("An error occured in the data access layer.");
-                //}
+                    category.CategoryID = (int)cmd.Parameters["@CategoryID"].Value;
+                }
+                catch
+                {
+                    // Kastar ett eget undantag om ett undantag kastas.
+                    throw new ApplicationException("An error occured in the data access layer.");
+                }
             }
         }
-        public void DeletePicture(int pictureID)
+      
+        public void UpdateCategory(Category category)
         {
             using (SqlConnection conn = CreateConnection())
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("AppSchema.usp_DeletePicture", conn);
+                    SqlCommand cmd = new SqlCommand("AppSchema.usp_UpdateGallery", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@PictureID", SqlDbType.Int).Value = pictureID;
+                    cmd.Parameters.Add("@CategoryID", SqlDbType.Int).Value = category.CategoryID;
+                    cmd.Parameters.Add("@CategoryName", SqlDbType.VarChar, 30).Value = category.CategoryName;
 
+                    // Öppnar anslutningen till databasen.
                     conn.Open();
+
+                    // Den lagrade proceduren innehåller en INSERT-sats och returnerar inga poster varför metoden 
+                    // ExecuteNonQuery används för att exekvera den lagrade proceduren.
                     cmd.ExecuteNonQuery();
                 }
                 catch
@@ -156,34 +157,5 @@ namespace GalleryProject.Model
                 }
             }
         }
-
-        public void UpdatePicture(Picture picture)
-        {
-            using (SqlConnection conn = CreateConnection())
-            {
-                //try
-                //{
-                    SqlCommand cmd = new SqlCommand("AppSchema.usp_UpdatePicture", conn);
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.Add("@PictureID", SqlDbType.Int).Value = picture.PictureID;
-                    cmd.Parameters.Add("@PictureName", SqlDbType.VarChar, 30).Value = picture.PictureName;
-                    cmd.Parameters.Add("@CategoryID", SqlDbType.Int).Value = picture.CategoryID;
-
-                    // Öppnar anslutningen till databasen.
-                    conn.Open();
-
-                    // Den lagrade proceduren innehåller en INSERT-sats och returnerar inga poster varför metoden 
-                    // ExecuteNonQuery används för att exekvera den lagrade proceduren.
-                    cmd.ExecuteNonQuery();
-                //}
-                //catch
-                //{
-                //    // Kastar ett eget undantag om ett undantag kastas.
-                //    throw new ApplicationException("An error occured in the data access layer.");
-                //}
-            }
-        }
     }
-    
 }

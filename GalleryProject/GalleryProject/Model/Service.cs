@@ -43,6 +43,10 @@ namespace GalleryProject.Model
 
         public static IEnumerable<Picture> GetPictures() { return pictureDAL.GetPictures(); }
 
+        public static void DeletePicture(Picture picture) { DeletePicture(picture); }
+
+        public static void DeletePicture(int pictureID) { pictureDAL.DeletePicture(pictureID); }
+
         public static void SavePicture(Picture picture, Stream file, string filename)
         {
             if (picture.PictureID == 0)
@@ -56,8 +60,24 @@ namespace GalleryProject.Model
             }
 
         }
+        //category
+        private static CategoryDAL _categoryDAL;
+        private static CategoryDAL categoryDAL { get { return _categoryDAL ?? (_categoryDAL = new CategoryDAL()); } }
 
+        public static Category GetCategory(int categoryID) { return categoryDAL.GetCategory(categoryID); }
 
+        public static IEnumerable<Category> GetCategories() { return categoryDAL.GetCategories(); }
 
+        public static void SaveCategory(Category category)
+        {
+            if (category.CategoryID == 0)
+            {
+                categoryDAL.InsertCategory(category);
+            }
+            else
+            {
+                categoryDAL.UpdateCategory(category);
+            }
+        }
     }
 }
