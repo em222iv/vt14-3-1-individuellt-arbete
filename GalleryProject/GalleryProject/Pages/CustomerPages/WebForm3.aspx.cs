@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -7,10 +7,10 @@ using System.Web.UI.WebControls;
 using GalleryProject.Model;
 
 
-namespace GalleryProject
+namespace GalleryProject.Pages.CustomerPages
 {
 
-    public partial class WebForm1 : System.Web.UI.Page
+    public partial class WebForm3 : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -30,17 +30,17 @@ namespace GalleryProject
         {
             return Service.GetGalleries();
         }
-        
-        public void ContactListView_InsertItem(Gallery gallery)
+
+        public void GalleryListView_InsertItem(Gallery gallery)
         {
- 
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     Service.SaveGallery(gallery);
                     Session["insertSuccess"] = true;
-                    Response.Redirect("~/Default.aspx");
+                    Response.Redirect("~/Pages/CustomerPages/WebForm3.aspx");
                 }
                 catch (Exception)
                 {
@@ -48,23 +48,23 @@ namespace GalleryProject
                 }
             }
         }
-        public void ContactListView_UpdateItem(int galleryID) // Parameterns namn måste överrensstämma med värdet DataKeyNames har.
+        public void GalleryListView_UpdateItem(int galleryID) // Parameterns namn måste överrensstämma med värdet DataKeyNames har.
         {
             //try
             //{
-                var contact = Service.GetGallery(galleryID);
-                if (contact == null)
-                {
-                    // Hittade inte kunden.
-                    ModelState.AddModelError(String.Empty, String.Format("Galleriet med nummer {0} hittades inte.", galleryID));
-                    return;
-                }
+            var contact = Service.GetGallery(galleryID);
+            if (contact == null)
+            {
+                // Hittade inte kunden.
+                ModelState.AddModelError(String.Empty, String.Format("Galleriet med nummer {0} hittades inte.", galleryID));
+                return;
+            }
 
-                if (TryUpdateModel(contact))
-                {
-                    Service.SaveGallery(contact);
-                }
-                Response.Redirect("~/Default.aspx");
+            if (TryUpdateModel(contact))
+            {
+                Service.SaveGallery(contact);
+            }
+            Response.Redirect("~/Pages/CustomerPages/WebForm3.aspx");
 
             //}
             //catch (Exception)
@@ -72,13 +72,13 @@ namespace GalleryProject
             //    ModelState.AddModelError(String.Empty, "Ett oväntat fel inträffade då galleriet skulle uppdateras.");
             //}
         }
-        public void ContactListView_DeleteItem(int galleryID) // Parameterns namn måste överrensstämma med värdet DataKeyNames har.
+        public void GalleryListView_DeleteItem(int galleryID) // Parameterns namn måste överrensstämma med värdet DataKeyNames har.
         {
             try
             {
                 Service.DeleteGallery(galleryID);
                 Session["deleteSuccess"] = true;
-                Response.Redirect("~/Default.aspx");
+                Response.Redirect("~/Pages/CustomerPages/WebForm3.aspx");
             }
             catch (Exception)
             {
@@ -86,4 +86,4 @@ namespace GalleryProject
             }
         }
     }
-}*/
+}

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace GalleryProject.Model
 {
-    public class GalleryPicture
+    public class Category
     {
       
     }
