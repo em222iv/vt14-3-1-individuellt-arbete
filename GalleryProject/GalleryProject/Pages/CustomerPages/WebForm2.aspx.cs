@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.IO;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Text.RegularExpressions;
+using System.Drawing;
 using GalleryProject.Model;
 
 
@@ -25,6 +28,8 @@ namespace GalleryProject.Pages.CustomerPages
 
         protected void Page_Load(object sender, EventArgs e)
         {
+
+            
 
              if (Session["insertSuccess"] as bool? == true)
              {
@@ -60,7 +65,7 @@ namespace GalleryProject.Pages.CustomerPages
                     ImageUpload imgupload = new ImageUpload();
                     var file = fileBrowse.FileContent;
                     var filename = fileBrowse.FileName;
-                    Service.SavePicture(picture, file, filename);
+                    Service.SavePicture(picture, file, filename, picture.PictureName);
                     Session["insertSuccess"] = true;
                     Response.Redirect("~/Pages/CustomerPages/WebForm2.aspx");
                 //}
@@ -85,9 +90,10 @@ namespace GalleryProject.Pages.CustomerPages
             if (TryUpdateModel(picture))
             {
                 ImageUpload imgupload = new ImageUpload();
+                
                 var file = fileBrowse.FileContent;
                 var filename = fileBrowse.FileName;
-                Service.SavePicture(picture, file, filename);
+                Service.SavePicture(picture, file, filename, picture.PictureName);
 
                 IsUploadSuccess = true;
                 Response.Redirect("~/Pages/CustomerPages/WebForm2.aspx");
@@ -104,6 +110,7 @@ namespace GalleryProject.Pages.CustomerPages
         {
             try
             {
+                var ImageQuery = Request.QueryString;
                 Service.DeletePicture(pictureID);
                 Session["deleteSuccess"] = true;
                 Response.Redirect("~/Pages/CustomerPages/WebForm2.aspx");

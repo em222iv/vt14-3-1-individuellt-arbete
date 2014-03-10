@@ -11,11 +11,10 @@ namespace GalleryProject
         public static void RegisterRoutes(RouteCollection routes)
         {
 
-            //routes.MapPageRoute("GalleryPage", "", "~/Pages/CustomerPages/GalleryPage");
 
-            routes.MapPageRoute("PicturePage", "", "~/Pages/CustomerPages/WebForm2");
+            routes.MapPageRoute("PicturePage", "", "~/Pages/CustomerPages/WebForm2.aspx");
 
-            routes.MapPageRoute("Picture", "", "~/Pages/CustomerPages/WebForm1");
+            routes.MapPageRoute("Comment", "Picture/{PictureID}", "~/Pages/CustomerPages/WebForm1.aspx");
         
         }
     }

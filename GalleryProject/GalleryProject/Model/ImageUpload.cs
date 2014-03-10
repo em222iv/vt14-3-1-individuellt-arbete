@@ -13,6 +13,8 @@ namespace GalleryProject.Model
 {
     public class ImageUpload
     {
+        Picture picture = new Picture();
+
         private static readonly Regex ApprovedExenstions;
         private static string PhysicalUploadedImagePath;
 
@@ -26,27 +28,44 @@ namespace GalleryProject.Model
             return File.Exists(Path.Combine(PhysicalUploadedImagePath, name));
         }
 
-        public string SaveImage(Stream stream, string fileName)
+        //public void DeleteImage(string fileName, string PictureName)
+        //{
+
+        //    if (ImageExist(fileName))
+        //    {
+        //        File.Delete(Path.Combine(PhysicalUploadedImagePath, PictureName));
+        //    }
+        //    else
+        //    {
+        //        throw new ApplicationException("Choose a picture to delete");
+        //    }
+
+
+        //}  
+      
+        public string SaveImage(Stream stream, string fileName, string PictureName)
         {
 
             var image = System.Drawing.Image.FromStream(stream);
-            var thumbnail = image.GetThumbnailImage(60, 45, null, System.IntPtr.Zero);
+            //var thumbnail = image.GetThumbnailImage(60, 45, null, System.IntPtr.Zero);
 
             if (ImageExist(fileName))
             {
                 var noExtension = Path.GetFileNameWithoutExtension(fileName);
                 var Extension = Path.GetExtension(fileName);
 
-                int counter = 1;
+           
 
                 while (ImageExist(fileName))
                 {
-                    counter++;
-                    fileName = string.Format("{0}{1}{2}", noExtension, counter, Extension);
+                    File.Delete(Path.Combine(PhysicalUploadedImagePath, PictureName));
                 }
             }
             if (IsValidImage(image))
             {
+          
+                var Extension = Path.GetExtension(fileName);
+                fileName = string.Format("{0}{1}", PictureName, Extension);
                 image.Save(Path.Combine(PhysicalUploadedImagePath, fileName));
 
             }

@@ -10,14 +10,9 @@ using GalleryProject.Model;
 
 namespace GalleryProject.Model
 {
-    public class PictureDAL : DALBase
+    public class CommentDAL : DALBase
     {
-        private static string PhysicalUploadedImagePath;
-        bool ImageExist(string name)
-        {
-            return File.Exists(Path.Combine(PhysicalUploadedImagePath, name));
-        }
-        public Picture GetPicture(int pictureID)
+        public Comment GetComment(int commentID)
         {
 
             using (SqlConnection conn = CreateConnection())
@@ -25,11 +20,11 @@ namespace GalleryProject.Model
                 //try
                 //{
                 //starta ett sqlcommand som sendan sparas undan för att kunna exekveras
-                SqlCommand cmd = new SqlCommand("AppSchema.usp_GetPicture", conn);
+                SqlCommand cmd = new SqlCommand("AppSchema.usp_GetComment", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 //skjuter in @ContactID så att den lagrade proceduren hittar.
-                cmd.Parameters.AddWithValue("@PictureID", pictureID);
+                cmd.Parameters.AddWithValue("@CommentID", commentID);
 
                 // öppnar conn strängen
                 conn.Open();
@@ -43,16 +38,17 @@ namespace GalleryProject.Model
                     if (reader.Read())
                     {
                         // getordinal hämtar index
+                        var commentIdIndex = reader.GetOrdinal("CommentID");
                         var pictureIdIndex = reader.GetOrdinal("PictureID");
-                        var pictureNameIndex = reader.GetOrdinal("PictureName");
-                        var categoryNameIndex = reader.GetOrdinal("CatergoryID");
-                     
-                        return new Picture
-                        {
-                            PictureID = reader.GetInt32(pictureIdIndex),
-                            PictureName = reader.GetString(pictureNameIndex),
-                            CategoryID = reader.GetInt32(categoryNameIndex)
+                        var commentIndex = reader.GetOrdinal("Comment");
+                        var commentatorIndex = reader.GetOrdinal("Commentator");
 
+                        return new Comment
+                        {
+                            CommentID = reader.GetInt32(commentIdIndex),
+                            PictureID = reader.GetInt32(pictureIdIndex),
+                            CommentInput = reader.GetString(commentIndex),
+                            Commentator = reader.GetString(commentatorIndex)
                         };
                     }
                 }
@@ -67,55 +63,58 @@ namespace GalleryProject.Model
         }
 
 
-        public IEnumerable<Picture> GetPictures()
+        public IEnumerable<Comment> GetComments(int PictureID)
         {
             using (var conn = CreateConnection())
             {
                 //try
                 //{
                     //Skapar det List-objekt som initialt har plats för 100 referenser till Customer-objekt.
-                    var Pictures = new List<Picture>(10);
+                    var Comments = new List<Comment>(100);
 
                     // Skapar och initierar ett SqlCommand-objekt som används till att 
                     // exekveras specifierad lagrad procedur.
-                    var cmd = new SqlCommand("AppSchema.usp_AllFromPictureTable", conn);
+                    var cmd = new SqlCommand("AppSchema.usp_SelectALLFromCommentTable", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
-
+                    //skickar med PictureID
+                    cmd.Parameters.AddWithValue("@PictureID", PictureID);
                     // Öppnar anslutningen till databasen.
                     conn.Open();
 
                     using (var reader = cmd.ExecuteReader())
                     {
-                        var galleryIdIndex = reader.GetOrdinal("PictureID");
-                        var galleryNameIndex = reader.GetOrdinal("PictureName");
-                        var categoryNameIndex = reader.GetOrdinal("CatergoryID");
+                        var commentIdIndex = reader.GetOrdinal("CommentID");
+                        var pictureIdIndex = reader.GetOrdinal("PictureID");
+                        var commentIndex = reader.GetOrdinal("Comment");
+                        var commentatorIndex = reader.GetOrdinal("Commentator");
 
                         while (reader.Read())
                         {
                             // Hämtar ut datat för en post.
                             // Du måste känna till SQL-satsen för att kunna välja rätt GetXxx-metod!!!!
-                            Pictures.Add(new Picture
+                            Comments.Add(new Comment
                             {
-                                PictureID = reader.GetInt32(galleryIdIndex),
-                                PictureName = reader.GetString(galleryNameIndex),
-                                CategoryID = reader.GetInt32(categoryNameIndex)
+                                CommentID = reader.GetInt32(commentIdIndex),
+                                PictureID = reader.GetInt32(pictureIdIndex),
+                                CommentInput = reader.GetString(commentIndex),
+                                Commentator = reader.GetString(commentatorIndex)
                             });
                         }
                     }
 
-                    Pictures.TrimExcess();
+                    Comments.TrimExcess();
 
                     // Returnerar referensen till List-objektet med referenser med Customer-objekt.
-                    return Pictures;
-                //}
-                //catch
-                //{
-                //    throw new ApplicationException("An error occured while getting conacts from the database.");
-                //}
+                    return Comments;
+            //    }
+            //    catch
+            //    {
+            //        throw new ApplicationException("An error occured while getting conacts from the database.");
+            //    }
             }
         }
 
-        public void InsertPicture(Picture picture)
+        public void InsertComment(Comment comment, int PictureID)
         {
             // Skapar och initierar ett anslutningsobjekt.
             using (SqlConnection conn = CreateConnection())
@@ -123,17 +122,19 @@ namespace GalleryProject.Model
                 //try
                 //{
 
-                    SqlCommand cmd = new SqlCommand("AppSchema.usp_InsertPicture", conn);
+                    SqlCommand cmd = new SqlCommand("AppSchema.usp_InsertComment", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@PictureName", SqlDbType.VarChar, 30).Value = picture.PictureName;
-                    cmd.Parameters.Add("@PictureID", SqlDbType.Int, 4).Direction = ParameterDirection.Output;
-                    cmd.Parameters.Add("@CatergoryID", SqlDbType.Int, 4).Value = picture.CategoryID;
+                    cmd.Parameters.Add("@CommentID", SqlDbType.Int, 4).Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add("@PictureID", SqlDbType.Int, 4).Value = PictureID;
+                    cmd.Parameters.Add("@Comment", SqlDbType.VarChar, 300).Value = comment.CommentInput;
+                    cmd.Parameters.Add("@Commentator", SqlDbType.VarChar, 30).Value = comment.Commentator;
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
 
-                    picture.PictureID = (int)cmd.Parameters["@PictureID"].Value;
+                    comment.CommentID = (int)cmd.Parameters["@CommentID"].Value;
+         
                 //}
                 //catch
                 //{
@@ -142,18 +143,16 @@ namespace GalleryProject.Model
                 //}
             }
         }
-        public void DeletePicture(int pictureID)
+        public void DeleteComment(int commentID)
         {
-            PhysicalUploadedImagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images");
             using (SqlConnection conn = CreateConnection())
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("AppSchema.usp_DeletePicture", conn);
+                    SqlCommand cmd = new SqlCommand("AppSchema.usp_DeleteComment", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@PictureID", SqlDbType.Int).Value = pictureID;
-
+                    cmd.Parameters.Add("@CommentID", SqlDbType.Int).Value = commentID;
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
@@ -166,18 +165,19 @@ namespace GalleryProject.Model
             }
         }
 
-        public void UpdatePicture(Picture picture)
+        public void UpdateComment(Comment comment)
         {
             using (SqlConnection conn = CreateConnection())
             {
                 //try
                 //{
-                    SqlCommand cmd = new SqlCommand("AppSchema.usp_UpdatePicture", conn);
+                    SqlCommand cmd = new SqlCommand("AppSchema.usp_UpdateComment", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    cmd.Parameters.Add("@PictureID", SqlDbType.Int).Value = picture.PictureID;
-                    cmd.Parameters.Add("@PictureName", SqlDbType.VarChar, 30).Value = picture.PictureName;
-                    cmd.Parameters.Add("@CategoryID", SqlDbType.Int).Value = picture.CategoryID;
+                    cmd.Parameters.Add("@CommentID", SqlDbType.Int, 4).Value = comment.CommentID;
+                    cmd.Parameters.Add("@PictureID", SqlDbType.Int, 4).Value = comment.PictureID;
+                    cmd.Parameters.Add("@Comment", SqlDbType.VarChar, 300).Value = comment.CommentInput;
+                    cmd.Parameters.Add("@Commentator", SqlDbType.VarChar, 30).Value = comment.Commentator;
 
                     // Öppnar anslutningen till databasen.
                     conn.Open();
@@ -194,5 +194,4 @@ namespace GalleryProject.Model
             }
         }
     }
-    
 }

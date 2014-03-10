@@ -45,18 +45,23 @@ namespace GalleryProject.Model
 
         public static void DeletePicture(Picture picture) { DeletePicture(picture); }
 
-        public static void DeletePicture(int pictureID) { pictureDAL.DeletePicture(pictureID); }
+        public static void DeletePicture(int pictureID) { 
+            pictureDAL.DeletePicture(pictureID);
 
-        public static void SavePicture(Picture picture, Stream file, string filename)
+        
+        }
+
+        public static void SavePicture(Picture picture, Stream file, string filename, string PictureName)
         {
             if (picture.PictureID == 0)
             {
+                imageDAL.SaveImage(file, filename, picture.PictureName);
                 pictureDAL.InsertPicture(picture);
-                imageDAL.SaveImage(file, filename);
             }
             else
             {
                 pictureDAL.UpdatePicture(picture);
+               
             }
 
         }
@@ -77,6 +82,29 @@ namespace GalleryProject.Model
             else
             {
                 categoryDAL.UpdateCategory(category);
+            }
+        }
+
+        private static CommentDAL _commentDAL;
+        private static CommentDAL commentDAL { get { return _commentDAL ?? (_commentDAL = new CommentDAL()); } }
+
+        public static Comment GetComment(int commentID) { return commentDAL.GetComment(commentID); }
+
+        public static IEnumerable<Comment> GetComments(int PictureID) { return commentDAL.GetComments(PictureID); }
+
+        public static void DeleteComment(Comment comment) { DeleteComment(comment); }
+
+        public static void DeleteComment(int commentID) { commentDAL.DeleteComment(commentID); }
+
+        public static void SaveComment(Comment comment, int PictureID)
+        {
+            if (comment.CommentID == 0)
+            {
+                commentDAL.InsertComment(comment, PictureID);
+            }
+            else
+            {
+                commentDAL.UpdateComment(comment);
             }
         }
     }

@@ -14,7 +14,8 @@
         <p>Your gallery has been deleted</p>
     </asp:PlaceHolder>
     <div id="fileBrowser">
-        <asp:FileUpload ID="fileBrowse" runat="server" AllowMultiple="True" /></div>
+        <asp:FileUpload ID="fileBrowse" runat="server" AllowMultiple="True" />
+    </div>
     <asp:ListView ID="GalleryConnectionString" runat="server"
         ItemType="GalleryProject.Model.Picture"
         InsertMethod="PictureListView_InsertItem"
@@ -52,16 +53,14 @@
                 </td>
                 <td>
                     <%-- "Kommandknappar" för att ta bort och redigera kunduppgifter. Kommandonamnen är VIKTIGA! --%>
-                    <asp:LinkButton ID="LinkButton1" runat="server" CommandName="Delete" Text="Ta bort" CausesValidation="false" OnClientClick="return confirm('Vill du ta bort galleriet?')" />
-                    <asp:LinkButton ID="LinkButton2" runat="server" CommandName="Edit" Text="Redigera" CausesValidation="false" />
-                     <asp:HyperLink ID="PictureNav" runat="server"
-                        Text="Välj Bild"
-                        ImageUrl='<%#"Content/thumbImg/" + Item.PictureID%>'
-                        NavigateUrl='<%#"?" + Item.PictureID %>'/>
-                    </td>
-                  </tr>
-                </ItemTemplate>
-               
+                    <asp:LinkButton ID="Tabort" runat="server" CommandName="Delete" Text="Ta bort" CausesValidation="false" OnClientClick="return confirm('Vill du ta bort galleriet?')" />
+                    <asp:LinkButton ID="Redigera" runat="server" CommandName="Edit" Text="Redigera" CausesValidation="false" />
+                    <asp:HyperLink ID="HyperLink1" runat="server"
+                        Text="kommentarer"
+                        NavigateUrl='<%# GetRouteUrl("Comment", new { Item.PictureID})%>' />
+                </td>
+            </tr>
+        </ItemTemplate>
         <EmptyDataTemplate>
             <%-- Detta visas då kunduppgifter saknas i databasen. --%>
             <table class="grid">
@@ -79,7 +78,7 @@
                     <asp:TextBox ID="PictureNameBox" runat="server" MaxLength="50" Text='<%# BindItem.PictureName %>' />
                 </td>
                 <td>
-                     <asp:DropDownList ID="CategoryDropDownList" runat="server"
+                    <asp:DropDownList ID="CategoryDropDownList" runat="server"
                         SelectMethod="CategoryListView"
                         DataTextField="CategoryName"
                         DataValueField="CategoryID"
@@ -90,11 +89,12 @@
                     <%-- "Kommandknappar" för att lägga till en ny kunduppgift och rensa texfälten. Kommandonamnen är VIKTIGA! --%>
                     <asp:LinkButton ID="LinkButton3" runat="server" CommandName="Insert" Text="Lägg till" OnClientClick="return confirm('Vill du lägga till denna bild?')" /></div>
                     <asp:LinkButton ID="LinkButton4" runat="server" CommandName="Cancel" Text="Rensa" CausesValidation="false" />
-                    
+
                 </td>
             </tr>
         </InsertItemTemplate>
         <EditItemTemplate>
+
             <%-- Mall för rad i tabellen för att redigera kunduppgifter. --%>
             <tr>
                 <%-- <td>
@@ -108,13 +108,16 @@
                     <asp:TextBox ID="TextBox3" runat="server" MaxLength="50" Text='<%# BindItem.CategoryID %>' />
                 </td>
                 <td>
+                 
                     <%-- "Kommandknappar" för att uppdatera en kunduppgift och avbryta. Kommandonamnen är VIKTIGA! --%>
 
                     <asp:LinkButton ID="LinkButton5" runat="server" CommandName="Update" Text="Spara" />
                     <asp:LinkButton ID="LinkButton6" runat="server" CommandName="Cancel" Text="Avbryt" CausesValidation="false" />
+             
                 </td>
             </tr>
         </EditItemTemplate>
+
     </asp:ListView>
 
     <%--<asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="Choose a picture to upload" ControlToValidate="fileBrowse"></asp:RequiredFieldValidator>--%>
