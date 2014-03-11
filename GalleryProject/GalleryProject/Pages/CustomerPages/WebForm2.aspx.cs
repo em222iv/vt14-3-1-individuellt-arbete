@@ -49,7 +49,6 @@ namespace GalleryProject.Pages.CustomerPages
             return Service.GetCategories();
         }
 
-
         public IEnumerable<Picture> PictureListView_GetData()
         {
             return Service.GetPictures();
@@ -62,7 +61,7 @@ namespace GalleryProject.Pages.CustomerPages
             {
                 //try
                 //{
-                    ImageUpload imgupload = new ImageUpload();
+                    ImageDAL imgupload = new ImageDAL();
                     var file = fileBrowse.FileContent;
                     var filename = fileBrowse.FileName;
                     Service.SavePicture(picture, file, filename, picture.PictureName);
@@ -77,9 +76,14 @@ namespace GalleryProject.Pages.CustomerPages
         }
         public void PictureListView_UpdateItem(int pictureID) // Parameterns namn måste överrensstämma med värdet DataKeyNames har.
         {
+            var filePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images");
+
             //try
             //{
+         
             var picture = Service.GetPicture(pictureID);
+            string oldPictureName = Path.Combine(filePath, picture.PictureName);
+            
             if (picture == null)
             {
                 // Hittade inte kunden.
@@ -89,12 +93,21 @@ namespace GalleryProject.Pages.CustomerPages
 
             if (TryUpdateModel(picture))
             {
-                ImageUpload imgupload = new ImageUpload();
+                ImageDAL imgupload = new ImageDAL();
                 
                 var file = fileBrowse.FileContent;
                 var filename = fileBrowse.FileName;
                 Service.SavePicture(picture, file, filename, picture.PictureName);
 
+                if (oldPictureName != null)
+                {
+                    var newPictureName = Service.GetPicture(pictureID);
+                    var UpdatedPictureName = Path.Combine(filePath, newPictureName.PictureName);
+                    File.Move(oldPictureName, UpdatedPictureName);
+                }
+                  
+ 
+                
                 IsUploadSuccess = true;
                 Response.Redirect("~/Pages/CustomerPages/WebForm2.aspx");
             }
@@ -108,17 +121,18 @@ namespace GalleryProject.Pages.CustomerPages
         }
         public void PictureListView_DeleteItem(int pictureID) // Parameterns namn måste överrensstämma med värdet DataKeyNames har.
         {
-            try
-            {
+            //try
+            //{
+                var picture = Service.GetPicture(pictureID);
                 var ImageQuery = Request.QueryString;
-                Service.DeletePicture(pictureID);
+                Service.DeletePicture(pictureID, picture);
                 Session["deleteSuccess"] = true;
                 Response.Redirect("~/Pages/CustomerPages/WebForm2.aspx");
-            }
-            catch (Exception)
-            {
-                ModelState.AddModelError(String.Empty, "Ett oväntat fel inträffade då kunduppgiften skulle tas bort.");
-            }
+            //}
+            //catch (Exception)
+            //{
+            //    ModelState.AddModelError(String.Empty, "Ett oväntat fel inträffade då kunduppgiften skulle tas bort.");
+            //}
         }
     }
 }

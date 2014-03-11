@@ -7,14 +7,17 @@
     <title></title>
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
+     <link href="Pages/Shared/Style.css" rel="stylesheet" />
+    <link href="Pages/Shared/ASPNETStyle.css" rel="stylesheet" />
 </head>
 <body>
-    <form id="form1" runat="server">
-    <div>
-        <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-        
-        </asp:ContentPlaceHolder>
+    <div id="container">
+        <form id="form1" runat="server">
+            <div id="MasterPageHolder">
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
+            </div>
+        </form>
     </div>
-    </form>
 </body>
 </html>

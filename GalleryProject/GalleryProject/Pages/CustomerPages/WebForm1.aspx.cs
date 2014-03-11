@@ -48,7 +48,7 @@ namespace GalleryProject.Pages.CustomerPages
             {
                 //try
                 //{
-                ImageUpload imgupload = new ImageUpload();
+                ImageDAL imgupload = new ImageDAL();
                 Service.SaveComment(comment, PictureID);
                 Session["insertSuccess"] = true;
                 Response.Redirect(PictureID.ToString());

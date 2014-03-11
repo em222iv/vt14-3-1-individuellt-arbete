@@ -11,21 +11,23 @@ using Microsoft.Win32;
 
 namespace GalleryProject.Model
 {
-    public class ImageUpload
+    public class ImageDAL
     {
         Picture picture = new Picture();
 
         private static readonly Regex ApprovedExenstions;
         private static string PhysicalUploadedImagePath;
 
-        static ImageUpload()
+        
+
+        static ImageDAL()
         {
             ApprovedExenstions = new Regex(@"^.*\.(gif|jpg|png)$", RegexOptions.IgnoreCase);
             PhysicalUploadedImagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images");
         }
-        bool ImageExist(string name)
+        bool ImageExist(string PictureName)
         {
-            return File.Exists(Path.Combine(PhysicalUploadedImagePath, name));
+            return File.Exists(Path.Combine(PhysicalUploadedImagePath, PictureName));
         }
 
         //public void DeleteImage(string fileName, string PictureName)
@@ -42,38 +44,39 @@ namespace GalleryProject.Model
 
 
         //}  
-      
-        public string SaveImage(Stream stream, string fileName, string PictureName)
+
+
+        public string SaveImage(Stream stream, string fileName, string PictureName, Picture picture)
         {
+            var noExtension = Path.GetFileNameWithoutExtension(fileName);
+            var Extension = Path.GetExtension(fileName);
 
             var image = System.Drawing.Image.FromStream(stream);
             //var thumbnail = image.GetThumbnailImage(60, 45, null, System.IntPtr.Zero);
-
-            if (ImageExist(fileName))
+            var PictureFullName = PictureName + Extension;
+            if (ImageExist(PictureFullName))
             {
-                var noExtension = Path.GetFileNameWithoutExtension(fileName);
-                var Extension = Path.GetExtension(fileName);
-
-           
-
-                while (ImageExist(fileName))
+                int imageExistCount = 0;
+                while (ImageExist(PictureFullName))
                 {
-                    File.Delete(Path.Combine(PhysicalUploadedImagePath, PictureName));
+                    imageExistCount++;
+                    PictureFullName = string.Format("{0}{1}{2}", PictureName, imageExistCount, Extension);
+                    image.Save(Path.Combine(PhysicalUploadedImagePath, PictureName));
                 }
             }
             if (IsValidImage(image))
             {
-          
-                var Extension = Path.GetExtension(fileName);
-                fileName = string.Format("{0}{1}", PictureName, Extension);
-                image.Save(Path.Combine(PhysicalUploadedImagePath, fileName));
-
+                
+                image.Save(Path.Combine(PhysicalUploadedImagePath, PictureFullName));
+             
             }
-
-            if (!ApprovedExenstions.IsMatch(fileName))
+            if (!ApprovedExenstions.IsMatch(PictureFullName))
             {
                 throw new Exception("MIME does not match");
             }
+            picture.PictureName = PictureFullName;
+
+
             return fileName;
 
         }

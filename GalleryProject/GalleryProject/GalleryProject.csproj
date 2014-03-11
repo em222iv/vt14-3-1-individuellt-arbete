@@ -61,14 +61,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Default.aspx" />
-    <Content Include="GalleryStyle.css" />
     <Content Include="Global.asax" />
     <Content Include="packages.config" />
     <Content Include="Pages\CustomerPages\WebForm1.aspx" />
     <Content Include="Pages\CustomerPages\WebForm2.aspx" />
-    <Content Include="Pages\CustomerPages\WebForm3.aspx" />
     <Content Include="Pages\Shared\Error.html" />
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
+    <Content Include="Pages\Shared\ASPNETStyle.css" />
+    <Content Include="Pages\Shared\Style.css" />
     <Content Include="Scripts\jquery-2.1.0.js" />
     <Content Include="Scripts\jquery-2.1.0.min.js" />
     <Content Include="Web.config" />
@@ -88,12 +88,10 @@
     <Compile Include="Model\Comment.cs" />
     <Compile Include="Model\DAL\CommentDAL.cs" />
     <Compile Include="Model\DAL\DALBase.cs" />
-    <Compile Include="Model\DAL\GalleryDAL.cs" />
     <Compile Include="Model\DAL\CategoryDAL.cs" />
     <Compile Include="Model\DAL\PictureDAL.cs" />
-    <Compile Include="Model\Gallery.cs" />
     <Compile Include="Model\Category.cs" />
-    <Compile Include="Model\ImageUpload.cs" />
+    <Compile Include="Model\DAL\ImageUpload.cs" />
     <Compile Include="Model\Picture.cs" />
     <Compile Include="Model\Service.cs" />
     <Compile Include="Pages\CustomerPages\WebForm1.aspx.cs">
@@ -109,13 +107,6 @@
     </Compile>
     <Compile Include="Pages\CustomerPages\WebForm2.aspx.designer.cs">
       <DependentUpon>WebForm2.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\CustomerPages\WebForm3.aspx.cs">
-      <DependentUpon>WebForm3.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\CustomerPages\WebForm3.aspx.designer.cs">
-      <DependentUpon>WebForm3.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site1.Master.cs">

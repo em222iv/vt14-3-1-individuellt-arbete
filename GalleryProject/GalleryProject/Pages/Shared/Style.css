@@ -1,0 +1,9 @@
+﻿#container {
+    margin-top:5%;
+    margin-left:25%;
+    width:45%;
+    max-height:594px;
+}
+#fileBrowser {
+    border:1px solid black;
+}

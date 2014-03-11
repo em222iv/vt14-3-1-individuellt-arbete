@@ -12,7 +12,9 @@ namespace GalleryProject.Model
 {
     public class PictureDAL : DALBase
     {
-        private static string PhysicalUploadedImagePath;
+        private static string PhysicalUploadedImagePath = "~/Images/";
+
+
         bool ImageExist(string name)
         {
             return File.Exists(Path.Combine(PhysicalUploadedImagePath, name));
@@ -115,11 +117,13 @@ namespace GalleryProject.Model
             }
         }
 
-        public void InsertPicture(Picture picture)
+        public void InsertPicture(Picture picture, string PictureName)
         {
             // Skapar och initierar ett anslutningsobjekt.
             using (SqlConnection conn = CreateConnection())
             {
+
+                
                 //try
                 //{
 
@@ -142,27 +146,29 @@ namespace GalleryProject.Model
                 //}
             }
         }
-        public void DeletePicture(int pictureID)
+        public void DeletePicture(int pictureID, Picture picture)
         {
+           
+
             PhysicalUploadedImagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images");
             using (SqlConnection conn = CreateConnection())
             {
-                try
-                {
+                //try
+                //{
                     SqlCommand cmd = new SqlCommand("AppSchema.usp_DeletePicture", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
-
                     cmd.Parameters.Add("@PictureID", SqlDbType.Int).Value = pictureID;
 
-
+                    File.Delete(Path.Combine(PhysicalUploadedImagePath, picture.PictureName));
                     conn.Open();
                     cmd.ExecuteNonQuery();
-                }
-                catch
-                {
-                    // Kastar ett eget undantag om ett undantag kastas.
-                    throw new ApplicationException("An error occured in the data access layer.");
-                }
+                   
+                //}
+                //catch
+                //{
+                //    // Kastar ett eget undantag om ett undantag kastas.
+                //    throw new ApplicationException("An error occured in the data access layer.");
+                //}
             }
         }
 

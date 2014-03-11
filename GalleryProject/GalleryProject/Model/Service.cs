@@ -9,35 +9,12 @@ using System.IO;
 namespace GalleryProject.Model
 {
     public class Service
-    {   //gallerihantering
-        private static GalleryDAL _galleryDAL;
-        private static GalleryDAL galleryDAL { get { return _galleryDAL ?? (_galleryDAL = new GalleryDAL()); } }
-
-        public static Gallery GetGallery(int galleryID) { return galleryDAL.GetGallery(galleryID); }
-
-        public static IEnumerable<Gallery> GetGalleries() { return galleryDAL.GetGalleries(); }
-
-        public static void DeleteGallery(Gallery gallery) { DeleteGallery(gallery); }
-
-        public static void DeleteGallery(int galleryID) { galleryDAL.DeleteGallery(galleryID); }
-
-        public static void SaveGallery(Gallery gallery)
-        {
-            if (gallery.GalleryID == 0)
-            {
-                galleryDAL.InsertGallery(gallery);
-            }
-            else
-            {
-                galleryDAL.UpdateGallery(gallery);
-            }
-
-        }
+    {
         //bildhantering
         private static PictureDAL _pictureDAL;
         private static PictureDAL pictureDAL { get { return _pictureDAL ?? (_pictureDAL = new PictureDAL()); } }
-        private static ImageUpload _imageDAL;
-        private static ImageUpload imageDAL { get { return _imageDAL ?? (_imageDAL = new ImageUpload()); } }
+        private static ImageDAL _imageDAL;
+        private static ImageDAL imageDAL { get { return _imageDAL ?? (_imageDAL = new ImageDAL()); } }
 
         public static Picture GetPicture(int pictureID) { return pictureDAL.GetPicture(pictureID); }
 
@@ -45,23 +22,18 @@ namespace GalleryProject.Model
 
         public static void DeletePicture(Picture picture) { DeletePicture(picture); }
 
-        public static void DeletePicture(int pictureID) { 
-            pictureDAL.DeletePicture(pictureID);
-
-        
-        }
+        public static void DeletePicture(int pictureID, Picture picture) { pictureDAL.DeletePicture(pictureID, picture); }
 
         public static void SavePicture(Picture picture, Stream file, string filename, string PictureName)
         {
             if (picture.PictureID == 0)
             {
-                imageDAL.SaveImage(file, filename, picture.PictureName);
-                pictureDAL.InsertPicture(picture);
+                imageDAL.SaveImage(file, filename, picture.PictureName, picture);
+                pictureDAL.InsertPicture(picture, PictureName);
             }
             else
             {
                 pictureDAL.UpdatePicture(picture);
-               
             }
 
         }

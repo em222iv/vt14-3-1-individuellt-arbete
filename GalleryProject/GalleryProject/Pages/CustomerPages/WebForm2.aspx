@@ -30,9 +30,11 @@
                     <%-- <th>
                         GalleryID
                     </th>--%>
-                    <th>PictureName
+                    <th>
+                        Pictures
                     </th>
-                    <th>Category
+                    <th>
+                        Category
                     </th>
                 </tr>
                 <%-- Platshållare för nya rader --%>
@@ -42,20 +44,28 @@
         <ItemTemplate>
             <%-- Mall för nya rader. --%>
             <tr>
-                <%-- <td>
-                    <%# Item.GalleryID %>
-                </td>--%>
-                <td>
-                    <%# Item.PictureName %>
+                <td id="PictureContainerTd">
+                    <asp:Image ID="image"
+                        runat="server"
+                        Width="100"
+                        Height="70"
+                        ImageUrl='<%#"~/Images/" + Item.PictureName%>' />
                 </td>
-                <td>
-                    <%# Item.CategoryID %>
+                <td id="CategoryBox">
+                      <asp:DropDownList ID="CategoryDropDownList" runat="server"
+                        SelectMethod="CategoryListView"
+                        DataTextField="CategoryName"
+                        DataValueField="CategoryID"
+                        SelectedValue='<%# BindItem.CategoryID %>'>
+                    </asp:DropDownList>
                 </td>
-                <td>
+                <td id="DeleteEdittd">
                     <%-- "Kommandknappar" för att ta bort och redigera kunduppgifter. Kommandonamnen är VIKTIGA! --%>
                     <asp:LinkButton ID="Tabort" runat="server" CommandName="Delete" Text="Ta bort" CausesValidation="false" OnClientClick="return confirm('Vill du ta bort galleriet?')" />
                     <asp:LinkButton ID="Redigera" runat="server" CommandName="Edit" Text="Redigera" CausesValidation="false" />
-                    <asp:HyperLink ID="HyperLink1" runat="server"
+                </td>
+                <td>
+                    <asp:HyperLink ID="CommentPageLink" runat="server"
                         Text="kommentarer"
                         NavigateUrl='<%# GetRouteUrl("Comment", new { Item.PictureID})%>' />
                 </td>
@@ -87,8 +97,8 @@
                 </td>
                 <td>
                     <%-- "Kommandknappar" för att lägga till en ny kunduppgift och rensa texfälten. Kommandonamnen är VIKTIGA! --%>
-                    <asp:LinkButton ID="LinkButton3" runat="server" CommandName="Insert" Text="Lägg till" OnClientClick="return confirm('Vill du lägga till denna bild?')" /></div>
-                    <asp:LinkButton ID="LinkButton4" runat="server" CommandName="Cancel" Text="Rensa" CausesValidation="false" />
+                    <asp:LinkButton ID="InsertButton" runat="server" CommandName="Insert" Text="Lägg till" OnClientClick="return confirm('Vill du lägga till denna bild?')" /></div>
+                    <asp:LinkButton ID="CleanTextButton" runat="server" CommandName="Cancel" Text="Rensa" CausesValidation="false" />
 
                 </td>
             </tr>
@@ -97,31 +107,25 @@
 
             <%-- Mall för rad i tabellen för att redigera kunduppgifter. --%>
             <tr>
-                <%-- <td>
-                    <asp:TextBox ID="Gallery" runat="server" MaxLength="50" Text='<%# BindItem.GalleryID %>' />
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="EditItemTemplate" ControlToValidate="Gallery" ValidationGroup="Edit"></asp:RequiredFieldValidator>
-                </td>--%>
-                <td>
-                    <asp:TextBox ID="TextBox2" runat="server" MaxLength="50" Text='<%# BindItem.PictureName %>' />
+                <td id="EditTD">
+                    <asp:TextBox ID="EditPictureName" runat="server" MaxLength="50" Width="90" Height="70" Text='<%# BindItem.PictureName %>' />
                 </td>
                 <td>
-                    <asp:TextBox ID="TextBox3" runat="server" MaxLength="50" Text='<%# BindItem.CategoryID %>' />
+                     <asp:DropDownList ID="CategoryDropDownList" runat="server"
+                        SelectMethod="CategoryListView"
+                        DataTextField="CategoryName"
+                        DataValueField="CategoryID"
+                        SelectedValue='<%# BindItem.CategoryID %>'>
+                    </asp:DropDownList>
                 </td>
                 <td>
-                 
                     <%-- "Kommandknappar" för att uppdatera en kunduppgift och avbryta. Kommandonamnen är VIKTIGA! --%>
-
-                    <asp:LinkButton ID="LinkButton5" runat="server" CommandName="Update" Text="Spara" />
-                    <asp:LinkButton ID="LinkButton6" runat="server" CommandName="Cancel" Text="Avbryt" CausesValidation="false" />
-             
+                    <asp:LinkButton ID="UpdateButton" runat="server" CommandName="Update" Text="Spara" />
+                    <asp:LinkButton ID="CancellButton" runat="server" CommandName="Cancel" Text="Avbryt" CausesValidation="false" />
                 </td>
             </tr>
         </EditItemTemplate>
-
     </asp:ListView>
-
-    <%--<asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="Choose a picture to upload" ControlToValidate="fileBrowse"></asp:RequiredFieldValidator>--%>
-    <%--<asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ErrorMessage="*JPG/JPEG/GIF files only" ValidationExpression="^.+\.(([jJ][pP][eE]?[gG])|([gG][iI][fF])|([pP][nN][gG]))$"  ControlToValidate="fileBrowse"></asp:RegularExpressionValidator>--%>
 </asp:Content>
 
 
