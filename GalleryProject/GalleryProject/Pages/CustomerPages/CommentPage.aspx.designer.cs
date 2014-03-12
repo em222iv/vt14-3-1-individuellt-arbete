@@ -10,7 +10,16 @@
 namespace GalleryProject.Pages.CustomerPages {
     
     
-    public partial class WebForm1 {
+    public partial class CommentPage {
+        
+        /// <summary>
+        /// PresentImageView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.FormView PresentImageView;
         
         /// <summary>
         /// GalleryConnectionString control.

@@ -13,7 +13,7 @@ using GalleryProject.Model;
 namespace GalleryProject.Pages.CustomerPages
 {
 
-    public partial class WebForm2 : System.Web.UI.Page
+    public partial class PicturePage : System.Web.UI.Page
     {
         private bool IsUploadSuccess
         {
@@ -37,11 +37,11 @@ namespace GalleryProject.Pages.CustomerPages
                  Session.Remove("insertSuccess");
              }
 
-             if (Session["deleteSuccess"] as bool? == true)
-             {
-                 deleteSuccess.Visible = true;
-                 Session.Remove("deleteSuccess");
-             }
+             //if (Session["deleteSuccess"] as bool? == true)
+             //{
+             //    deleteSuccess.Visible = true;
+             //    Session.Remove("deleteSuccess");
+             //}
         }
 
         public IEnumerable<Category> CategoryListView()
@@ -66,7 +66,7 @@ namespace GalleryProject.Pages.CustomerPages
                     var filename = fileBrowse.FileName;
                     Service.SavePicture(picture, file, filename, picture.PictureName);
                     Session["insertSuccess"] = true;
-                    Response.Redirect("~/Pages/CustomerPages/WebForm2.aspx");
+                    Response.Redirect("~/Pages/CustomerPages/PicturePage.aspx");
                 //}
                 //catch (Exception)
                 //{
@@ -76,13 +76,15 @@ namespace GalleryProject.Pages.CustomerPages
         }
         public void PictureListView_UpdateItem(int pictureID) // Parameterns namn måste överrensstämma med värdet DataKeyNames har.
         {
-            var filePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images");
+            var imagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images");
+            var ThumbImagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images/thumbImg");
 
-            //try
-            //{
+            try
+            {
          
             var picture = Service.GetPicture(pictureID);
-            string oldPictureName = Path.Combine(filePath, picture.PictureName);
+            string oldImageName = Path.Combine(imagePath, picture.PictureName);
+            string oldthumbImageName = Path.Combine(ThumbImagePath, picture.PictureName);
             
             if (picture == null)
             {
@@ -99,40 +101,38 @@ namespace GalleryProject.Pages.CustomerPages
                 var filename = fileBrowse.FileName;
                 Service.SavePicture(picture, file, filename, picture.PictureName);
 
-                if (oldPictureName != null)
+                if (oldImageName != null)
                 {
                     var newPictureName = Service.GetPicture(pictureID);
-                    var UpdatedPictureName = Path.Combine(filePath, newPictureName.PictureName);
-                    File.Move(oldPictureName, UpdatedPictureName);
-                }
-                  
- 
-                
+                    var UpdatedImageName = Path.Combine(imagePath, newPictureName.PictureName);
+                    var UpdatedThumbImageName = Path.Combine(ThumbImagePath, newPictureName.PictureName);
+                    File.Move(oldImageName, UpdatedImageName);
+                    File.Move(oldthumbImageName, UpdatedThumbImageName);
+                 
+                }  
                 IsUploadSuccess = true;
-                Response.Redirect("~/Pages/CustomerPages/WebForm2.aspx");
+                Response.Redirect("~/Pages/CustomerPages/PicturePage.aspx");
             }
-            
-
-            //}
-            //catch (Exception)
-            //{
-            //    ModelState.AddModelError(String.Empty, "Ett oväntat fel inträffade då galleriet skulle uppdateras.");
-            //}
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError(String.Empty, "Ett oväntat fel inträffade då galleriet skulle uppdateras.");
+            }
         }
         public void PictureListView_DeleteItem(int pictureID) // Parameterns namn måste överrensstämma med värdet DataKeyNames har.
         {
-            //try
-            //{
+            try
+            {
                 var picture = Service.GetPicture(pictureID);
                 var ImageQuery = Request.QueryString;
                 Service.DeletePicture(pictureID, picture);
                 Session["deleteSuccess"] = true;
-                Response.Redirect("~/Pages/CustomerPages/WebForm2.aspx");
-            //}
-            //catch (Exception)
-            //{
-            //    ModelState.AddModelError(String.Empty, "Ett oväntat fel inträffade då kunduppgiften skulle tas bort.");
-            //}
+                Response.Redirect("~/Pages/CustomerPages/PicturePage.aspx");
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError(String.Empty, "Ett oväntat fel inträffade då kunduppgiften skulle tas bort.");
+            }
         }
     }
 }

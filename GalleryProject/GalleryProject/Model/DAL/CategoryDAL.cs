@@ -15,8 +15,8 @@ namespace GalleryProject.Model
 
             using (SqlConnection conn = CreateConnection())
             {
-                //try
-                //{
+                try
+                {
                 //starta ett sqlcommand som sendan sparas undan för att kunna exekveras
                 SqlCommand cmd = new SqlCommand("AppSchema.GetCategory", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -49,11 +49,11 @@ namespace GalleryProject.Model
                 }
 
                 return null;
-                //}
-                //catch
-                //{
-                //    throw new ApplicationException("An error occured in the data access layer.");
-                //}
+                }
+                catch
+                {
+                    throw new ApplicationException("An error occured in the data access layer when trying to get category");
+                }
             }
         }
 
@@ -62,8 +62,8 @@ namespace GalleryProject.Model
         {
             using (var conn = CreateConnection())
             {
-                //try
-                //{
+                try
+                {
                     //Skapar det List-objekt som initialt har plats för 100 referenser till Customer-objekt.
                     var Categories = new List<Category>(10);
 
@@ -96,11 +96,11 @@ namespace GalleryProject.Model
 
                     // Returnerar referensen till List-objektet med referenser med Customer-objekt.
                     return Categories;
-                //}
-                //catch
-                //{
-                //    throw new ApplicationException("An error occured while getting conacts from the database.");
-                //}
+                }
+                catch
+                {
+                    throw new ApplicationException("An error occured in the data access layer when trying to get categories");
+                }
             }
         }
 
@@ -126,7 +126,7 @@ namespace GalleryProject.Model
                 catch
                 {
                     // Kastar ett eget undantag om ett undantag kastas.
-                    throw new ApplicationException("An error occured in the data access layer.");
+                    throw new ApplicationException("AAn error occured in the data access layer when trying to set category");
                 }
             }
         }
@@ -153,7 +153,7 @@ namespace GalleryProject.Model
                 catch
                 {
                     // Kastar ett eget undantag om ett undantag kastas.
-                    throw new ApplicationException("An error occured in the data access layer.");
+                    throw new ApplicationException("An error occured in the data access layer when trying to update category");
                 }
             }
         }

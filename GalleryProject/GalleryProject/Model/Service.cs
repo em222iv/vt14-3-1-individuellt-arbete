@@ -26,6 +26,13 @@ namespace GalleryProject.Model
 
         public static void SavePicture(Picture picture, Stream file, string filename, string PictureName)
         {
+            ICollection<ValidationResult> validationResults;
+            if (!picture.Validate(out validationResults))
+            {
+                var ex = new ValidationException("Objektet klarade inte valideringen.");
+                ex.Data.Add("ValidationResults", validationResults);
+                throw ex;
+            }
             if (picture.PictureID == 0)
             {
                 imageDAL.SaveImage(file, filename, picture.PictureName, picture);
@@ -47,6 +54,13 @@ namespace GalleryProject.Model
 
         public static void SaveCategory(Category category)
         {
+            ICollection<ValidationResult> validationResults;
+            if (!category.Validate(out validationResults))
+            {
+                var ex = new ValidationException("Objektet klarade inte valideringen.");
+                ex.Data.Add("ValidationResults", validationResults);
+                throw ex;
+            }
             if (category.CategoryID == 0)
             {
                 categoryDAL.InsertCategory(category);
@@ -70,6 +84,14 @@ namespace GalleryProject.Model
 
         public static void SaveComment(Comment comment, int PictureID)
         {
+
+            ICollection<ValidationResult> validationResults;
+            if (!comment.Validate(out validationResults))
+            {
+                var ex = new ValidationException("Objektet klarade inte valideringen.");
+                ex.Data.Add("ValidationResults", validationResults);
+                throw ex;
+            }
             if (comment.CommentID == 0)
             {
                 commentDAL.InsertComment(comment, PictureID);

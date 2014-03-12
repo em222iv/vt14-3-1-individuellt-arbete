@@ -17,8 +17,8 @@ namespace GalleryProject.Model
 
             using (SqlConnection conn = CreateConnection())
             {
-                //try
-                //{
+                try
+                {
                 //starta ett sqlcommand som sendan sparas undan för att kunna exekveras
                 SqlCommand cmd = new SqlCommand("AppSchema.usp_GetComment", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -54,11 +54,11 @@ namespace GalleryProject.Model
                 }
 
                 return null;
-                //}
-                //catch
-                //{
-                //    throw new ApplicationException("An error occured in the data access layer.");
-                //}
+                }
+                catch
+                {
+                    throw new ApplicationException("An error occured in the data access layer when trying to get comment");
+                }
             }
         }
 
@@ -67,14 +67,14 @@ namespace GalleryProject.Model
         {
             using (var conn = CreateConnection())
             {
-                //try
-                //{
+                try
+                {
                     //Skapar det List-objekt som initialt har plats för 100 referenser till Customer-objekt.
                     var Comments = new List<Comment>(100);
 
                     // Skapar och initierar ett SqlCommand-objekt som används till att 
                     // exekveras specifierad lagrad procedur.
-                    var cmd = new SqlCommand("AppSchema.usp_SelectALLFromCommentTable", conn);
+                    var cmd = new SqlCommand("AppSchema.usp_SelectCommentByID", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
                     //skickar med PictureID
                     cmd.Parameters.AddWithValue("@PictureID", PictureID);
@@ -106,11 +106,11 @@ namespace GalleryProject.Model
 
                     // Returnerar referensen till List-objektet med referenser med Customer-objekt.
                     return Comments;
-            //    }
-            //    catch
-            //    {
-            //        throw new ApplicationException("An error occured while getting conacts from the database.");
-            //    }
+                }
+                catch
+                {
+                    throw new ApplicationException("An error occured in the data access layer when trying to get comments");
+                }
             }
         }
 
@@ -119,8 +119,8 @@ namespace GalleryProject.Model
             // Skapar och initierar ett anslutningsobjekt.
             using (SqlConnection conn = CreateConnection())
             {
-                //try
-                //{
+                try
+                {
 
                     SqlCommand cmd = new SqlCommand("AppSchema.usp_InsertComment", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -134,13 +134,13 @@ namespace GalleryProject.Model
                     cmd.ExecuteNonQuery();
 
                     comment.CommentID = (int)cmd.Parameters["@CommentID"].Value;
-         
-                //}
-                //catch
-                //{
-                //    // Kastar ett eget undantag om ett undantag kastas.
-                //    throw new ApplicationException("An error occured in the data access layer.");
-                //}
+
+                }
+                catch
+                {
+                    // Kastar ett eget undantag om ett undantag kastas.
+                    throw new ApplicationException("An error occured in the data access layer when trying to comment");
+                }
             }
         }
         public void DeleteComment(int commentID)
@@ -160,7 +160,7 @@ namespace GalleryProject.Model
                 catch
                 {
                     // Kastar ett eget undantag om ett undantag kastas.
-                    throw new ApplicationException("An error occured in the data access layer.");
+                    throw new ApplicationException("An error occured in the data access layer when trying to delete comment");
                 }
             }
         }
@@ -169,8 +169,8 @@ namespace GalleryProject.Model
         {
             using (SqlConnection conn = CreateConnection())
             {
-                //try
-                //{
+                try
+                {
                     SqlCommand cmd = new SqlCommand("AppSchema.usp_UpdateComment", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
@@ -185,12 +185,12 @@ namespace GalleryProject.Model
                     // Den lagrade proceduren innehåller en INSERT-sats och returnerar inga poster varför metoden 
                     // ExecuteNonQuery används för att exekvera den lagrade proceduren.
                     cmd.ExecuteNonQuery();
-                //}
-                //catch
-                //{
-                //    // Kastar ett eget undantag om ett undantag kastas.
-                //    throw new ApplicationException("An error occured in the data access layer.");
-                //}
+                }
+                catch
+                {
+                    // Kastar ett eget undantag om ett undantag kastas.
+                    throw new ApplicationException("An error occured in the data access layer when trying to update comment");
+                }
             }
         }
     }
