@@ -12,9 +12,11 @@ namespace GalleryProject.Model
 {
     public class PictureDAL : DALBase
     {
+        //jag har tänkt att skapa dessa Path variabler globalt i en extenssionclass eller likandne för att slippa upprepa kod och skapa dem på flera ställen
+        //men har inte haft tid
         private static string PhysicalUploadedImagePath;
         private static string PhysicalUploadedThumbnailPath;
-
+        //skapar en metod för att titta om  filen existerar
         bool ImageExist(string name)
         {
             return File.Exists(Path.Combine(PhysicalUploadedImagePath, name));
@@ -26,7 +28,7 @@ namespace GalleryProject.Model
             {
                 try
                 {
-                //starta ett sqlcommand som sendan sparas undan för att kunna exekveras
+                //starta ett sqlcommand som sendan sparas undan 
                 SqlCommand cmd = new SqlCommand("AppSchema.usp_GetPicture", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
 
@@ -37,11 +39,9 @@ namespace GalleryProject.Model
                 conn.Open();
 
 
-                //får en referens till executeReader
+                //får en referens till executeReader 
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
-                    // Om det finns en post att läsa returnerar Read true. Finns ingen post returnerar
-                    // Read false.
                     if (reader.Read())
                     {
                         // getordinal hämtar index
@@ -50,11 +50,10 @@ namespace GalleryProject.Model
                         var categoryNameIndex = reader.GetOrdinal("CatergoryID");
                      
                         return new Picture
-                        {
+                        {//skjuter in indexvärdena till parametrarna
                             PictureID = reader.GetInt32(pictureIdIndex),
                             PictureName = reader.GetString(pictureNameIndex),
                             CategoryID = reader.GetInt32(categoryNameIndex)
-
                         };
                     }
                 }
@@ -67,19 +66,14 @@ namespace GalleryProject.Model
                 }
             }
         }
-
-
         public IEnumerable<Picture> GetPictures()
         {
             using (var conn = CreateConnection())
             {
                 try
                 {
-                    //Skapar det List-objekt som initialt har plats för 100 referenser till Customer-objekt.
                     var Pictures = new List<Picture>(10);
 
-                    // Skapar och initierar ett SqlCommand-objekt som används till att 
-                    // exekveras specifierad lagrad procedur.
                     var cmd = new SqlCommand("AppSchema.usp_SelectALLFromPictureTable", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
@@ -94,8 +88,6 @@ namespace GalleryProject.Model
 
                         while (reader.Read())
                         {
-                            // Hämtar ut datat för en post.
-                            // Du måste känna till SQL-satsen för att kunna välja rätt GetXxx-metod!!!!
                             Pictures.Add(new Picture
                             {
                                 PictureID = reader.GetInt32(galleryIdIndex),
@@ -117,7 +109,7 @@ namespace GalleryProject.Model
             }
         }
 
-        public void InsertPicture(Picture picture, string PictureName)
+        public void InsertPicture(Picture picture)
         {
             // Skapar och initierar ett anslutningsobjekt.
             using (SqlConnection conn = CreateConnection())
@@ -126,7 +118,7 @@ namespace GalleryProject.Model
                 {
                     SqlCommand cmd = new SqlCommand("AppSchema.usp_InsertPicture", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
-
+                    //skjuter in picturename och categoryid medens jag tar emot pictureid(output)
                     cmd.Parameters.Add("@PictureName", SqlDbType.VarChar, 30).Value = picture.PictureName;
                     cmd.Parameters.Add("@PictureID", SqlDbType.Int, 4).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("@CatergoryID", SqlDbType.Int, 4).Value = picture.CategoryID;
@@ -142,7 +134,7 @@ namespace GalleryProject.Model
                 }
             }
         }
-        public void DeletePicture(int pictureID, Picture picture)
+        public void DeletePicture(Picture picture)
         {
             PhysicalUploadedImagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images");
             PhysicalUploadedThumbnailPath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images/thumbImg");
@@ -152,7 +144,7 @@ namespace GalleryProject.Model
                 {
                     SqlCommand cmd = new SqlCommand("AppSchema.usp_DeletePicture", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@PictureID", SqlDbType.Int).Value = pictureID;
+                    cmd.Parameters.Add("@PictureID", SqlDbType.Int).Value = picture.PictureID;
 
                     File.Delete(Path.Combine(PhysicalUploadedImagePath, picture.PictureName));
                     File.Delete(Path.Combine(PhysicalUploadedThumbnailPath, picture.PictureName));
@@ -162,7 +154,6 @@ namespace GalleryProject.Model
                 }
                 catch
                 {
-                    // Kastar ett eget undantag om ett undantag kastas.
                     throw new ApplicationException("An error occured in the data access layer when trying to delete picture");
                 }
             }
@@ -181,16 +172,11 @@ namespace GalleryProject.Model
                     cmd.Parameters.Add("@PictureName", SqlDbType.VarChar, 30).Value = picture.PictureName;
                     cmd.Parameters.Add("@CategoryID", SqlDbType.Int).Value = picture.CategoryID;
 
-                    // Öppnar anslutningen till databasen.
                     conn.Open();
-
-                    // Den lagrade proceduren innehåller en INSERT-sats och returnerar inga poster varför metoden 
-                    // ExecuteNonQuery används för att exekvera den lagrade proceduren.
                     cmd.ExecuteNonQuery();
                 }
                 catch
                 {
-                    // Kastar ett eget undantag om ett undantag kastas.
                     throw new ApplicationException("An error occured in the data access layer when trying to update picture");
                 }
             }

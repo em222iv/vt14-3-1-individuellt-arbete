@@ -17,7 +17,7 @@ namespace GalleryProject.Pages.CustomerPages
     public partial class CommentPage : System.Web.UI.Page
     {
         private bool IsUploadSuccess
-        {
+        {//sessin för att visa lyckat meddelande
             set { Session["UploadSuccess"] = value; }
             get
             {
@@ -30,9 +30,9 @@ namespace GalleryProject.Pages.CustomerPages
         protected void Page_Load(object sender, EventArgs e, [RouteData] int PictureID)
         {
         }
-
+                                                            //hämtar den medskickade datan i URLn 
         public IEnumerable<Comment> CommentListView_GetData([RouteData] int PictureID)
-        {   
+        {   //hämtar in alla kommentarerna
             return Service.GetComments(PictureID);
         }
 
@@ -42,7 +42,7 @@ namespace GalleryProject.Pages.CustomerPages
             {
                 try
                 {
-                ImageDAL imgupload = new ImageDAL();
+                //
                 Service.SaveComment(comment, PictureID);
                 Session["insertSuccess"] = true;
                 Response.Redirect(PictureID.ToString());
@@ -53,7 +53,7 @@ namespace GalleryProject.Pages.CustomerPages
                 }
             }
         }
-        public void CommentListView_UpdateItem(int commentID, [RouteData] int pictureID) // Parameterns namn måste överrensstämma med värdet DataKeyNames har.
+        public void CommentListView_UpdateItem(int commentID, [RouteData] int pictureID) 
         {
             try
             {
@@ -66,10 +66,11 @@ namespace GalleryProject.Pages.CustomerPages
                 }
 
                 if (TryUpdateModel(comment))
-                {
+                {//skickar vidare comment till savecomment i service
                     Service.SaveComment(comment, pictureID);
                 }
                 IsUploadSuccess = true;
+                //uppdaterar sidan till det bild id som är valt
                 Response.Redirect(pictureID.ToString());
 
             }
@@ -78,13 +79,13 @@ namespace GalleryProject.Pages.CustomerPages
                 ModelState.AddModelError(String.Empty, "An error occured when trying to update comment");
             }
         }
-        public void CommentListView_DeleteItem(int commentID, [RouteData] int pictureID) // Parameterns namn måste överrensstämma med värdet DataKeyNames har.
+        public void CommentListView_DeleteItem(int commentID, [RouteData] int pictureID) 
         {
             try
-            {
-                var ImageQuery = Request.QueryString;
+            {//skickar med det valda id'et för att tas bort
                 Service.DeleteComment(commentID);
                 Session["deleteSuccess"] = true;
+                //uppdaterar sidan
                 Response.Redirect(pictureID.ToString());
             }
             catch (Exception)

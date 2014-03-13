@@ -73,7 +73,6 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_start\Class1.cs" />
     <Compile Include="App_start\RouteConfig.cs" />
     <Compile Include="App_start\ValidationExtension.cs" />
     <Compile Include="Global.asax.cs">

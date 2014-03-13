@@ -11,7 +11,7 @@ using GalleryProject.Model;
 namespace GalleryProject.Model
 {
     public class CommentDAL : DALBase
-    {
+    {       //tar emot ett ett id för att hämta dess info från databasen
         public Comment GetComment(int commentID)
         {
 
@@ -19,16 +19,14 @@ namespace GalleryProject.Model
             {
                 try
                 {
-                //starta ett sqlcommand som sendan sparas undan för att kunna exekveras
+                //hämtar lagrad procedur och sparar undan den
                 SqlCommand cmd = new SqlCommand("AppSchema.usp_GetComment", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                //skjuter in @ContactID så att den lagrade proceduren hittar.
+                //skjuter in @CommentID så att den lagrade proceduren hittar.
                 cmd.Parameters.AddWithValue("@CommentID", commentID);
 
-                // öppnar conn strängen
                 conn.Open();
-
 
                 //får en referens till executeReader
                 using (SqlDataReader reader = cmd.ExecuteReader())
@@ -62,18 +60,16 @@ namespace GalleryProject.Model
             }
         }
 
-
         public IEnumerable<Comment> GetComments(int PictureID)
         {
             using (var conn = CreateConnection())
             {
                 try
                 {
-                    //Skapar det List-objekt som initialt har plats för 100 referenser till Customer-objekt.
+                   //skapar listan
                     var Comments = new List<Comment>(100);
 
-                    // Skapar och initierar ett SqlCommand-objekt som används till att 
-                    // exekveras specifierad lagrad procedur.
+                    //checkar den lagrade proceduren och spara undan den
                     var cmd = new SqlCommand("AppSchema.usp_SelectCommentByID", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
                     //skickar med PictureID
@@ -91,7 +87,6 @@ namespace GalleryProject.Model
                         while (reader.Read())
                         {
                             // Hämtar ut datat för en post.
-                            // Du måste känna till SQL-satsen för att kunna välja rätt GetXxx-metod!!!!
                             Comments.Add(new Comment
                             {
                                 CommentID = reader.GetInt32(commentIdIndex),
@@ -104,7 +99,7 @@ namespace GalleryProject.Model
 
                     Comments.TrimExcess();
 
-                    // Returnerar referensen till List-objektet med referenser med Customer-objekt.
+                    // Returnerar referensen till List-objektet 
                     return Comments;
                 }
                 catch
@@ -121,16 +116,17 @@ namespace GalleryProject.Model
             {
                 try
                 {
-
+                    //läser av proceduren och spara ner den
                     SqlCommand cmd = new SqlCommand("AppSchema.usp_InsertComment", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
-
+                    //skickar med/tar emot 
                     cmd.Parameters.Add("@CommentID", SqlDbType.Int, 4).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("@PictureID", SqlDbType.Int, 4).Value = PictureID;
                     cmd.Parameters.Add("@Comment", SqlDbType.VarChar, 300).Value = comment.CommentInput;
                     cmd.Parameters.Add("@Commentator", SqlDbType.VarChar, 30).Value = comment.Commentator;
 
                     conn.Open();
+                    //kör proceduren
                     cmd.ExecuteNonQuery();
 
                     comment.CommentID = (int)cmd.Parameters["@CommentID"].Value;
@@ -138,17 +134,16 @@ namespace GalleryProject.Model
                 }
                 catch
                 {
-                    // Kastar ett eget undantag om ett undantag kastas.
                     throw new ApplicationException("An error occured in the data access layer when trying to comment");
                 }
             }
         }
         public void DeleteComment(int commentID)
-        {
+        {    // Skapar och initierar ett anslutningsobjekt.
             using (SqlConnection conn = CreateConnection())
             {
                 try
-                {
+                {   
                     SqlCommand cmd = new SqlCommand("AppSchema.usp_DeleteComment", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
@@ -159,7 +154,6 @@ namespace GalleryProject.Model
                 }
                 catch
                 {
-                    // Kastar ett eget undantag om ett undantag kastas.
                     throw new ApplicationException("An error occured in the data access layer when trying to delete comment");
                 }
             }
@@ -182,13 +176,10 @@ namespace GalleryProject.Model
                     // Öppnar anslutningen till databasen.
                     conn.Open();
 
-                    // Den lagrade proceduren innehåller en INSERT-sats och returnerar inga poster varför metoden 
-                    // ExecuteNonQuery används för att exekvera den lagrade proceduren.
                     cmd.ExecuteNonQuery();
                 }
                 catch
                 {
-                    // Kastar ett eget undantag om ett undantag kastas.
                     throw new ApplicationException("An error occured in the data access layer when trying to update comment");
                 }
             }

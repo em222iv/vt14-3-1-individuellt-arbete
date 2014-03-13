@@ -11,20 +11,20 @@ namespace GalleryProject.Model
     public class Service
     {
         //bildhantering
+        ///service pratar mellan codebohind och dataåtkomstlagert/affärslogiklagret
+        //skapar instanser av klasserna och 
         private static PictureDAL _pictureDAL;
         private static PictureDAL pictureDAL { get { return _pictureDAL ?? (_pictureDAL = new PictureDAL()); } }
         private static ImageDAL _imageDAL;
         private static ImageDAL imageDAL { get { return _imageDAL ?? (_imageDAL = new ImageDAL()); } }
-
+       
         public static Picture GetPicture(int pictureID) { return pictureDAL.GetPicture(pictureID); }
 
         public static IEnumerable<Picture> GetPictures() { return pictureDAL.GetPictures(); }
 
-        public static void DeletePicture(Picture picture) { DeletePicture(picture); }
+        public static void DeletePicture(Picture picture) { pictureDAL.DeletePicture(picture); }
 
-        public static void DeletePicture(int pictureID, Picture picture) { pictureDAL.DeletePicture(pictureID, picture); }
-
-        public static void SavePicture(Picture picture, Stream file, string filename, string PictureName)
+        public static void SavePicture(Picture picture, Stream file, string filename)
         {
             ICollection<ValidationResult> validationResults;
             if (!picture.Validate(out validationResults))
@@ -35,8 +35,8 @@ namespace GalleryProject.Model
             }
             if (picture.PictureID == 0)
             {
-                imageDAL.SaveImage(file, filename, picture.PictureName, picture);
-                pictureDAL.InsertPicture(picture, PictureName);
+                imageDAL.SaveImage(file, filename, picture);
+                pictureDAL.InsertPicture(picture);
             }
             else
             {
@@ -70,7 +70,7 @@ namespace GalleryProject.Model
                 categoryDAL.UpdateCategory(category);
             }
         }
-
+        //kommentarhantering
         private static CommentDAL _commentDAL;
         private static CommentDAL commentDAL { get { return _commentDAL ?? (_commentDAL = new CommentDAL()); } }
 

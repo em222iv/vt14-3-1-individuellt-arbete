@@ -9,7 +9,7 @@ namespace GalleryProject.Model
 {
     public class CategoryDAL : DALBase
     {
-
+        //tar emot ett ett id för att hämta dess info från databasen
         public Category GetCategory(int categoryID)
         {
 
@@ -40,7 +40,7 @@ namespace GalleryProject.Model
                         var categoryNameIndex = reader.GetOrdinal("CategoryName");
 
                         return new Category
-                        {
+                        {   
                             CategoryID = reader.GetInt32(categoryIdIndex),
                             CategoryName = reader.GetString(categoryNameIndex),
 
@@ -51,7 +51,7 @@ namespace GalleryProject.Model
                 return null;
                 }
                 catch
-                {
+                {//kastar ut ett undantag från dataåtkomstlagret
                     throw new ApplicationException("An error occured in the data access layer when trying to get category");
                 }
             }
@@ -76,14 +76,13 @@ namespace GalleryProject.Model
                     conn.Open();
 
                     using (var reader = cmd.ExecuteReader())
-                    {
+                    {   //skjuter in categoryfältens värde till variablerna
                         var categoryIdIndex = reader.GetOrdinal("CategoryID");
                         var categoryNameIndex = reader.GetOrdinal("CategoryName");
 
                         while (reader.Read())
                         {
-                            // Hämtar ut datat för en post.
-                            // Du måste känna till SQL-satsen för att kunna välja rätt GetXxx-metod!!!!
+                            // Hämtar ut data och sparar ner
                             Categories.Add(new Category
                             {
                                 CategoryID = reader.GetInt32(categoryIdIndex),
@@ -91,10 +90,10 @@ namespace GalleryProject.Model
                             });
                         }
                     }
-
+                    //minimerar utrymme som listan tar
                     Categories.TrimExcess();
 
-                    // Returnerar referensen till List-objektet med referenser med Customer-objekt.
+                    // Returnerar referensen till List-objektet
                     return Categories;
                 }
                 catch
@@ -111,21 +110,21 @@ namespace GalleryProject.Model
             {
                 try
                 {
-
+                    //hämtar lagrad procedur 
                     SqlCommand cmd = new SqlCommand("AppSchema.InsertCategory", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
-
+                    // skickar in categoru name som parameter och tar emot cateogryID(output)
                     cmd.Parameters.Add("@CategoryName", SqlDbType.VarChar, 30).Value = category.CategoryName;
                     cmd.Parameters.Add("@CategoryID", SqlDbType.Int, 4).Direction = ParameterDirection.Output;
-
+                    //öppnar sträng
                     conn.Open();
+                    //kör den lagrade proceduren
                     cmd.ExecuteNonQuery();
-
+                    //sparar ner outputvärdet till en int
                     category.CategoryID = (int)cmd.Parameters["@CategoryID"].Value;
                 }
                 catch
                 {
-                    // Kastar ett eget undantag om ett undantag kastas.
                     throw new ApplicationException("AAn error occured in the data access layer when trying to set category");
                 }
             }
@@ -146,13 +145,11 @@ namespace GalleryProject.Model
                     // Öppnar anslutningen till databasen.
                     conn.Open();
 
-                    // Den lagrade proceduren innehåller en INSERT-sats och returnerar inga poster varför metoden 
                     // ExecuteNonQuery används för att exekvera den lagrade proceduren.
                     cmd.ExecuteNonQuery();
                 }
                 catch
                 {
-                    // Kastar ett eget undantag om ett undantag kastas.
                     throw new ApplicationException("An error occured in the data access layer when trying to update category");
                 }
             }
