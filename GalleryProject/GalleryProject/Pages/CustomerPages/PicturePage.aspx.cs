@@ -97,10 +97,11 @@ namespace GalleryProject.Pages.CustomerPages
                 //Uppdaterar och binder värden som tas emot från formuläret till pictureobjektet
                 if (TryUpdateModel(picture))
                 {
-                    //sparar undan filen och och filens namn i variablerlna file och filename
+                    //Skapar variablerna för att savepicture klassen i service vill ha dem när man väl vill spara filer. 
+                    //de används inte till något just här utom undgå detta problem då jag inte hunnit titta närmare på det
                     var file = fileBrowse.FileContent;
                     var filename = fileBrowse.FileName;
-                    //skickar vidare filväden och picureobjektes referensen till serviceklassen för att sparas
+                    //skickar vidare filväden och picureobjektes referensen till serviceklassen för att sparas tillsammans med fil och file
                     Service.SavePicture(picture, file, filename);
 
                     if (oldImageName != null)

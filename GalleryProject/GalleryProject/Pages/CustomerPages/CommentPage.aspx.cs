@@ -53,15 +53,15 @@ namespace GalleryProject.Pages.CustomerPages
                 }
             }
         }
-        public void CommentListView_UpdateItem(int commentID, [RouteData] int pictureID) 
+        public void CommentListView_UpdateItem(Comment Comment, [RouteData] int pictureID) 
         {
             try
             {
-                var comment = Service.GetComment(commentID);
+                var comment = Service.GetComment(Comment.CommentID);
                 if (comment == null)
                 {
                     // Hittade inte kunden.
-                    ModelState.AddModelError(String.Empty, String.Format("Galleriet med nummer {0} hittades inte.", commentID));
+                    ModelState.AddModelError(String.Empty, String.Format("Coudld not find the comment with this id. {0}", Comment.CommentID));
                     return;
                 }
 

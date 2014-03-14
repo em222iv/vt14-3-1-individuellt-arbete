@@ -79,18 +79,17 @@ namespace GalleryProject.Model
 
                     using (var reader = cmd.ExecuteReader())
                     {
-                        var commentIdIndex = reader.GetOrdinal("CommentID");
-                        var pictureIdIndex = reader.GetOrdinal("PictureID");
+                        var commentIDIndex = reader.GetOrdinal("CommentID");
                         var commentIndex = reader.GetOrdinal("Comment");
                         var commentatorIndex = reader.GetOrdinal("Commentator");
+                    
 
                         while (reader.Read())
                         {
                             // Hämtar ut datat för en post.
                             Comments.Add(new Comment
                             {
-                                CommentID = reader.GetInt32(commentIdIndex),
-                                PictureID = reader.GetInt32(pictureIdIndex),
+                                CommentID = reader.GetInt32(commentIDIndex),
                                 CommentInput = reader.GetString(commentIndex),
                                 Commentator = reader.GetString(commentatorIndex)
                             });
@@ -114,8 +113,8 @@ namespace GalleryProject.Model
             // Skapar och initierar ett anslutningsobjekt.
             using (SqlConnection conn = CreateConnection())
             {
-                try
-                {
+                //try
+                //{
                     //läser av proceduren och spara ner den
                     SqlCommand cmd = new SqlCommand("AppSchema.usp_InsertComment", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -131,11 +130,11 @@ namespace GalleryProject.Model
 
                     comment.CommentID = (int)cmd.Parameters["@CommentID"].Value;
 
-                }
-                catch
-                {
-                    throw new ApplicationException("An error occured in the data access layer when trying to comment");
-                }
+            //    }
+            //    catch
+            //    {
+            //        throw new ApplicationException("An error occured in the data access layer when trying to comment");
+            //    }
             }
         }
         public void DeleteComment(int commentID)
