@@ -71,7 +71,7 @@ namespace GalleryProject.Pages.CustomerPages
 
                 if (picture == null)
                 {
-                    // Hittas inte bilden så kastas undantaget
+                    // Hittas inte bilden så kastas undantag
                     ModelState.AddModelError(String.Empty, String.Format("Picture with this id couldn't be found. ID{0}", pictureID));
                     return;
                 }
