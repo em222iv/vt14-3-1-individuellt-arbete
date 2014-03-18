@@ -13,6 +13,7 @@
 <body>
     <div id="container">
         <form id="form1" runat="server">
+            <asp:Literal ID="Confirmation" runat="server"></asp:Literal>
             <div id="MasterPageHolder">
                 <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
                 </asp:ContentPlaceHolder>

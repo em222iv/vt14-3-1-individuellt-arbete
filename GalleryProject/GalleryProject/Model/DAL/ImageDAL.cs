@@ -75,9 +75,7 @@ namespace GalleryProject.Model
                     //sparar ner den ursprungliga bilden och thumbnailbilden i sina bestäma mappar
                     image.Save(Path.Combine(PhysicalUploadedImagePath, PictureFullName));
                     thumbnail.Save(Path.Combine(PhysicalUploadedThumbnailPath, PictureFullName));
-
                 }
-             
             }
             catch
             {

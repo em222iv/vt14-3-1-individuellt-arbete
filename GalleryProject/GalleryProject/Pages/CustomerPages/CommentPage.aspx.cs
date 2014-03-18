@@ -10,41 +10,30 @@ using System.Drawing;
 using GalleryProject.Model;
 using System.Web.ModelBinding;
 
-
 namespace GalleryProject.Pages.CustomerPages
 {
 
     public partial class CommentPage : System.Web.UI.Page
     {
-        private bool IsUploadSuccess
-        {//sessin för att visa lyckat meddelande
-            set { Session["UploadSuccess"] = value; }
-            get
-            {
-                var isUploadSuccess = Session["UploadSuccess"] as bool? ?? false;
-                Session.Remove("UploadSuccess");
-                return isUploadSuccess;
-            }
-        }
-
         protected void Page_Load(object sender, EventArgs e, [RouteData] int PictureID)
         {
         }
                                                             //hämtar den medskickade datan i URLn 
         public IEnumerable<Comment> CommentListView_GetData([RouteData] int PictureID)
-        {   //hämtar in alla kommentarerna
+        {   //hämtar in alla kommentarerna från utvald bild
             return Service.GetComments(PictureID);
         }
-
+                                                                //hämtar den medskickade datan i URLn 
         public void CommentListView_InsertItem(Comment comment, [RouteData] int PictureID)
         {
             if (TryUpdateModel(comment))
             {
                 try
                 {
-                //
+                //skickar med commentobjektet och det bestämda pictureID 
                 Service.SaveComment(comment, PictureID);
-                Session["insertSuccess"] = true;
+                //skickar meddelnade ifall det lyckats och redirectar sidan
+                Page.SetTempData("Confirmation", "The comment has been added");
                 Response.Redirect(PictureID.ToString());
                 }
                 catch (Exception)
@@ -52,7 +41,7 @@ namespace GalleryProject.Pages.CustomerPages
                     ModelState.AddModelError(String.Empty, "An error occured when trying to add comment");
                 }
             }
-        }
+        }                                                       //hämtar den medskickade datan i URLn 
         public void CommentListView_UpdateItem(Comment Comment, [RouteData] int pictureID) 
         {
             try
@@ -69,27 +58,28 @@ namespace GalleryProject.Pages.CustomerPages
                 {//skickar vidare comment till savecomment i service
                     Service.SaveComment(comment, pictureID);
                 }
-                IsUploadSuccess = true;
-                //uppdaterar sidan till det bild id som är valt
+
+                // //skickar meddelnade ifall det lyckats och redirectar sidan till bildens picture id som man sen tidigare valt
+                Page.SetTempData("Confirmation", "The comment has been edited");
                 Response.Redirect(pictureID.ToString());
 
             }
             catch (Exception)
-            {
+            {//kastar undantag om ett fel sker i uppdateringsprocessen
                 ModelState.AddModelError(String.Empty, "An error occured when trying to update comment");
             }
-        }
+        }                                                      //hämtar den medskickade datan i URLn 
         public void CommentListView_DeleteItem(int commentID, [RouteData] int pictureID) 
         {
             try
             {//skickar med det valda id'et för att tas bort
                 Service.DeleteComment(commentID);
-                Session["deleteSuccess"] = true;
-                //uppdaterar sidan
+                // ger ett success meddelande, uppdaterar sidan
+                Page.SetTempData("Confirmation", "The comment has been deleted");
                 Response.Redirect(pictureID.ToString());
             }
             catch (Exception)
-            {
+            {//Annars kastast ett undantag
                 ModelState.AddModelError(String.Empty, "An error occured when trying to delete comment");
             }
         }

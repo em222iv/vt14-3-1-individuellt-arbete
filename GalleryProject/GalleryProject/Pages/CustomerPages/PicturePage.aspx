@@ -43,12 +43,14 @@
                         runat="server"
                         ImageUrl='<%#"~/Images/thumbImg/" + Item.PictureName%>' />
                 </td>
+                <%--visar vilken kategori bilden tilhlör. enabled=false så för att rundgå missförstånd om att man kan ändra kateogri utanför editläget--%>
                 <td id="CategoryBox">
                     <asp:DropDownList ID="CategoryDropDownList" runat="server"
                         SelectMethod="CategoryListView"
                         DataTextField="CategoryName"
                         DataValueField="CategoryID"
-                        SelectedValue='<%# BindItem.CategoryID %>'>
+                        SelectedValue='<%# BindItem.CategoryID %>'
+                        enabled="false">
                     </asp:DropDownList>
                 </td>
                 <td id="DeleteEdittd">
@@ -68,6 +70,7 @@
             <tr>
                 <td>
                     <asp:TextBox ID="PictureNameBox" runat="server" MaxLength="30" ValidationGroup="insert" Text='<%#: BindItem.PictureName %>' />
+                     <%--Validering--%>
                     <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="*Please, give the picture a name" ControlToValidate="PictureNameBox" ValidationGroup="insert"></asp:RequiredFieldValidator>
                 </td>
                 <td>
@@ -92,6 +95,7 @@
             <tr>
                 <td id="EditTD">
                     <asp:TextBox ID="EditPictureName" runat="server" MaxLength="30" Width="150" Height="40" Text='<%# BindItem.PictureName %>' />
+                  <%--Validering--%>
                     <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ErrorMessage="*You must declare correct filetype. JPG/GIF/PNG" ValidationExpression="^.+\.(([jJ][pP][eE]?[gG])|([gG][iI][fF])|([pP][nN][gG]))$" ControlToValidate="EditPictureName"></asp:RegularExpressionValidator>
                 </td>
                 <td>

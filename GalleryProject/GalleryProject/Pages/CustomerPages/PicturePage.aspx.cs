@@ -15,29 +15,9 @@ namespace GalleryProject.Pages.CustomerPages
 
     public partial class PicturePage : System.Web.UI.Page
     {
-        private bool IsUploadSuccess
-        {//skapar en session för att visa ett meddelande om en bild blivit uppladdad eller inte
-            set { Session["UploadSuccess"] = value; }
-            get
-            {//sparar ner den i en variabel för att kunna aktivera den på valfria ställen
-                var isUploadSuccess = Session["UploadSuccess"] as bool? ?? false;
-                Session.Remove("UploadSuccess");
-                return isUploadSuccess;
-            }
-        }
         protected void Page_Load(object sender, EventArgs e)
         {
-            //if (Session["insertSuccess"] as bool? == true)
-            //{
-            //    insertSuccess.Visible = true;
-            //    Session.Remove("insertSuccess");
-            //}
-
-            //if (Session["deleteSuccess"] as bool? == true)
-            //{
-            //    deleteSuccess.Visible = true;
-            //    Session.Remove("deleteSuccess");
-            //}
+         
         }
 
         public IEnumerable<Category> CategoryListView()
@@ -63,8 +43,9 @@ namespace GalleryProject.Pages.CustomerPages
                     // skickar vidare dessa till serviceklassens savepiture
                     Service.SavePicture(picture, file, filename);
                     //aktiverer en session som säger att bilden har lagt upp till användaren
-                    Session["insertSuccess"] = true;
+                    
                     //uppdaterar sidan för att se att den nya bilden sparats
+                    Page.SetTempData("Confirmation", "The picture has been added");
                     Response.Redirect("~/Pages/CustomerPages/PicturePage.aspx");
                 }
                 catch (Exception)
@@ -81,8 +62,8 @@ namespace GalleryProject.Pages.CustomerPages
             var imagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images");
             var ThumbImagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images/thumbImg");
 
-            try
-            {
+            //try
+            //{
                 //hämtar bildens nuvarande namn från databasen och sparar ner den i oldimagename. samma med thumbnail
                 var picture = Service.GetPicture(pictureID);
                 string oldImageName = Path.Combine(imagePath, picture.PictureName);
@@ -109,21 +90,36 @@ namespace GalleryProject.Pages.CustomerPages
                         var newPictureName = Service.GetPicture(pictureID);
                         var UpdatedImageName = Path.Combine(imagePath, newPictureName.PictureName);
                         var UpdatedThumbImageName = Path.Combine(ThumbImagePath, newPictureName.PictureName);
+
+                        //det är en bugg då man ska ändra bildnamn. finns redan filnamnet så blir det en krock i databasen då namnen ska va unika.
+                        //jag har försökt ordna detta men har inte hittat något som fungerar bra, i brist på tid så hinner jag inte fixa detta.
+                        //CRUDen fungerar i övrigt mot databasen, väljer jag att att namnen inte bör vara unika där så skulle felet försvinna men
+                        //det skulle bli fel mellan bildnamn på databasen och filens namn.
+
+                        //ifall bilden redan finns så går man in i if satsen och justerar namnet på att plussa på siffror tills namnet är unikt
+                        //int imageExistCount = 0;
+                        //if (File.Exists(UpdatedImageName))
+                        //{
+                        //    var Extension = Path.GetExtension(newPictureName.PictureName);
+                        //    var noExtension = Path.GetFileNameWithoutExtension(newPictureName.PictureName);
+
+                        //    imageExistCount++;
+                        //    UpdatedImageName = string.Format("{0}\\{1}{2}{3}", imagePath, noExtension, imageExistCount, Extension);
+                        //}
+
                         //byter den gamla bildfilens namn mot det nya för att stämma överens med databasen namn
                         File.Move(oldImageName, UpdatedImageName);
                         File.Move(oldthumbImageName, UpdatedThumbImageName);
-
                     }
-                    //visar med ett meddelande att bidlen blivit uppladdad för användaren
-                    IsUploadSuccess = true;
-                    //uppdaterar sidan
+                    //visar success meddelande, uppdaterar sidan
+                    Page.SetTempData("Confirmation", "The picture has been edited");
                     Response.Redirect("~/Pages/CustomerPages/PicturePage.aspx");
                 }
-            }
-            catch (Exception)
-            {
-                ModelState.AddModelError(String.Empty, "Ett oväntat fel inträffade då galleriet skulle uppdateras.");
-            }
+            //}
+            //catch (Exception)
+            //{
+            //    ModelState.AddModelError(String.Empty, "An error occured when trying to edit picture");
+            //}
         }
         public void PictureListView_DeleteItem(int pictureID)
         {
@@ -132,13 +128,14 @@ namespace GalleryProject.Pages.CustomerPages
                 var picture = Service.GetPicture(pictureID);
                 //skickar med pictureobjektet
                 Service.DeletePicture(picture);
-                Session["deleteSuccess"] = true;
+               
                 //uppdaterar sidan
+                Page.SetTempData("Confirmation", "The picture has been deleted");
                 Response.Redirect("~/Pages/CustomerPages/PicturePage.aspx");
             }
             catch (Exception)
             {
-                ModelState.AddModelError(String.Empty, "Ett oväntat fel inträffade då kunduppgiften skulle tas bort.");
+                ModelState.AddModelError(String.Empty, "An error occurd when trying to delete picture");
             }
         }
     }
