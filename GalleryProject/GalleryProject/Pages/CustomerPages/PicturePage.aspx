@@ -107,7 +107,7 @@
                     </asp:DropDownList>
                 </td>
                 <td>
-                <%--  knappar för att avluta redigeringen eller genomföra den--%>
+                <%--  knappar för att redigeringen eller genomföra den--%>
                     <asp:LinkButton ID="UpdateButton" runat="server" CommandName="Update" Text="Spara" OnClientClick="return confirm('Do you want to make the update?')" />
                     <asp:LinkButton ID="CancellButton" runat="server" CommandName="Cancel" Text="Avbryt" CausesValidation="false" />
                 </td>

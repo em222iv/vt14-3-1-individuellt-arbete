@@ -72,11 +72,12 @@
             <tr>
                 <td>
                     <%--Boxar och knappar för att redigera kommentar och kommentator--%>
-                    <asp:TextBox ID="EditComment" runat="server" MaxLength="50" Text='<%# BindItem.CommentInput %>' />
+                   <%-- max 300 tecken på textboxen--%>
+                    <asp:TextBox ID="EditComment" runat="server" MaxLength="300" Text='<%# BindItem.CommentInput %>' Columns="300" />
                     <asp:RequiredFieldValidator ID="RequiredCommentValidator2" runat="server" ErrorMessage="*Please, write down your comment" ControlToValidate="EditComment"></asp:RequiredFieldValidator>
                 </td>
                 <td>
-                    <asp:TextBox ID="EditCommentator" runat="server" MaxLength="50" Text='<%# BindItem.Commentator %>' />
+                    <asp:TextBox ID="EditCommentator" runat="server" MaxLength="30" Text='<%# BindItem.Commentator %>' />
                        <asp:RequiredFieldValidator ID="RequiredCommentatorValidator2" runat="server" ErrorMessage="*Please, write down your comment" ControlToValidate="EditCommentator"></asp:RequiredFieldValidator>
                 </td>
                 <td>

@@ -29,7 +29,7 @@ namespace GalleryProject.Model
             ICollection<ValidationResult> validationResults;
             if (!picture.Validate(out validationResults))
             {
-                var ex = new ValidationException("Objektet klarade inte valideringen.");
+                var ex = new ValidationException("The object didn't make the validation");
                 ex.Data.Add("ValidationResults", validationResults);
                 throw ex;
             }
