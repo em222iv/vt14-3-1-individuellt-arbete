@@ -14,7 +14,6 @@ namespace GalleryProject
             page.Session.Remove(key);
             return value;
         }
-
         public static void SetTempData(this Page page, string key, object value)
         {
             page.Session[key] = value;

@@ -40,10 +40,11 @@ namespace GalleryProject.Pages.CustomerPages
                     //sparar undan filen och och filens namn i variablerlna file och filename
                     var file = fileBrowse.FileContent;
                     var filename = fileBrowse.FileName;
+                    string oldImageName = "";
+                    string oldthumbImageName = "";
                     // skickar vidare dessa till serviceklassens savepiture
-                    Service.SavePicture(picture, file, filename);
+                    Service.SavePicture(picture, file, filename, oldImageName, oldthumbImageName);
                     //aktiverer en session som säger att bilden har lagt upp till användaren
-                    
                     //uppdaterar sidan för att se att den nya bilden sparats
                     Page.SetTempData("Confirmation", "The picture has been added");
                     Response.Redirect("~/Pages/CustomerPages/PicturePage.aspx");
@@ -60,7 +61,7 @@ namespace GalleryProject.Pages.CustomerPages
         //Jag har tyvärr inte hunnit med detta
             //sparar den filmerna sökvägar
             var imagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images");
-            var ThumbImagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images/thumbImg");
+            var ThumbImagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images\\thumbImg");
 
             //try
             //{
@@ -68,6 +69,7 @@ namespace GalleryProject.Pages.CustomerPages
                 var picture = Service.GetPicture(pictureID);
                 string oldImageName = Path.Combine(imagePath, picture.PictureName);
                 string oldthumbImageName = Path.Combine(ThumbImagePath, picture.PictureName);
+               
 
                 if (picture == null)
                 {
@@ -83,34 +85,7 @@ namespace GalleryProject.Pages.CustomerPages
                     var file = fileBrowse.FileContent;
                     var filename = fileBrowse.FileName;
                     //skickar vidare filväden och picureobjektes referensen till serviceklassen för att sparas tillsammans med fil och file
-                    Service.SavePicture(picture, file, filename);
-
-                    if (oldImageName != null)
-                    { // hämtar bilden nya namn från databasen och sparar undan den i en variabel. samma för thumbnailen
-                        var newPictureName = Service.GetPicture(pictureID);
-                        var UpdatedImageName = Path.Combine(imagePath, newPictureName.PictureName);
-                        var UpdatedThumbImageName = Path.Combine(ThumbImagePath, newPictureName.PictureName);
-
-                        //det är en bugg då man ska ändra bildnamn. finns redan filnamnet så blir det en krock i databasen då namnen ska va unika.
-                        //jag har försökt ordna detta men har inte hittat något som fungerar bra, i brist på tid så hinner jag inte fixa detta.
-                        //CRUDen fungerar i övrigt mot databasen, väljer jag att att namnen inte bör vara unika där så skulle felet försvinna men
-                        //det skulle bli fel mellan bildnamn på databasen och filens namn.
-
-                        //ifall bilden redan finns så går man in i if satsen och justerar namnet på att plussa på siffror tills namnet är unikt
-                        //int imageExistCount = 0;
-                        //if (File.Exists(UpdatedImageName))
-                        //{
-                        //    var Extension = Path.GetExtension(newPictureName.PictureName);
-                        //    var noExtension = Path.GetFileNameWithoutExtension(newPictureName.PictureName);
-
-                        //    imageExistCount++;
-                        //    UpdatedImageName = string.Format("{0}\\{1}{2}{3}", imagePath, noExtension, imageExistCount, Extension);
-                        //}
-
-                        //byter den gamla bildfilens namn mot det nya för att stämma överens med databasen namn
-                        File.Move(oldImageName, UpdatedImageName);
-                        File.Move(oldthumbImageName, UpdatedThumbImageName);
-                    }
+                    Service.SavePicture(picture, file, filename, oldImageName, oldthumbImageName);
                     //visar success meddelande, uppdaterar sidan
                     Page.SetTempData("Confirmation", "The picture has been edited");
                     Response.Redirect("~/Pages/CustomerPages/PicturePage.aspx");

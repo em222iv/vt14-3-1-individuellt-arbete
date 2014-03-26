@@ -7,8 +7,8 @@
     <title></title>
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
+     <link href="Pages/Shared/ASPNETStyle.css" rel="stylesheet" />
      <link href="Pages/Shared/Style.css" rel="stylesheet" />
-    <link href="Pages/Shared/ASPNETStyle.css" rel="stylesheet" />
 </head>
 <body>
     <div id="container">

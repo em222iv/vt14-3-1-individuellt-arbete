@@ -7,3 +7,8 @@
 #fileBrowser {
     border:1px solid black;
 }
+ContentPlaceHolder1 {
+    background-color:black;
+    max-height:700px;
+    overflow:scroll;
+}

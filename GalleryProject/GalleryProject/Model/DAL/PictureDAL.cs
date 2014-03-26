@@ -12,18 +12,8 @@ namespace GalleryProject.Model
 {
     public class PictureDAL : DALBase
     {
-        //jag har tänkt att skapa dessa Path variabler globalt i en extenssionclass eller likandne för att slippa upprepa kod och skapa dem på flera ställen
-        //men har inte haft tid
-        private static string PhysicalUploadedImagePath;
-        private static string PhysicalUploadedThumbnailPath;
-        //skapar en metod för att titta om  filen existerar
-        bool ImageExist(string name)
-        {
-            return File.Exists(Path.Combine(PhysicalUploadedImagePath, name));
-        }
         public Picture GetPicture(int pictureID)
         {
-
             using (SqlConnection conn = CreateConnection())
             {
                 try
@@ -136,8 +126,7 @@ namespace GalleryProject.Model
         }
         public void DeletePicture(Picture picture)
         {
-            PhysicalUploadedImagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images");
-            PhysicalUploadedThumbnailPath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images/thumbImg");
+
             using (SqlConnection conn = CreateConnection())
             {
                 try
@@ -145,9 +134,10 @@ namespace GalleryProject.Model
                     SqlCommand cmd = new SqlCommand("AppSchema.usp_DeletePicture", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("@PictureID", SqlDbType.Int).Value = picture.PictureID;
+                    //kallar på deletemetoden i imageDAL för att ta bort de fysiska bilderna istället för att göra detta i pictureDAL klassen
+                    Model.ImageDAL delete = new Model.ImageDAL();
+                    delete.DeletePicture(picture);
 
-                    File.Delete(Path.Combine(PhysicalUploadedImagePath, picture.PictureName));
-                    File.Delete(Path.Combine(PhysicalUploadedThumbnailPath, picture.PictureName));
                     conn.Open();
                     cmd.ExecuteNonQuery();
 
@@ -167,7 +157,8 @@ namespace GalleryProject.Model
                 {
                     SqlCommand cmd = new SqlCommand("AppSchema.usp_UpdatePicture", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
-
+                    //picture.PictureName har ändrats till den uppdaterade namnet och skickar detta till databasen
+                    //databsen tar fortfarande bara unika namn då jag valt att validera namn på detta sätt. allt får ett unikt namn.
                     cmd.Parameters.Add("@PictureID", SqlDbType.Int).Value = picture.PictureID;
                     cmd.Parameters.Add("@PictureName", SqlDbType.VarChar, 30).Value = picture.PictureName;
                     cmd.Parameters.Add("@CategoryID", SqlDbType.Int).Value = picture.CategoryID;
@@ -182,5 +173,4 @@ namespace GalleryProject.Model
             }
         }
     }
-    
 }

@@ -24,7 +24,7 @@ namespace GalleryProject.Model
 
         public static void DeletePicture(Picture picture) { pictureDAL.DeletePicture(picture); }
 
-        public static void SavePicture(Picture picture, Stream file, string filename)
+        public static void SavePicture(Picture picture, Stream file, string filename, string oldImageName, string oldthumbImageName)
         {
             ICollection<ValidationResult> validationResults;
             if (!picture.Validate(out validationResults))
@@ -40,6 +40,7 @@ namespace GalleryProject.Model
             }
             else
             {
+                imageDAL.UpdatePicture(picture, oldImageName, oldthumbImageName);
                 pictureDAL.UpdatePicture(picture);
             }
 
@@ -84,7 +85,6 @@ namespace GalleryProject.Model
 
         public static void SaveComment(Comment comment, int PictureID)
         {
-
             ICollection<ValidationResult> validationResults;
             if (!comment.Validate(out validationResults))
             {

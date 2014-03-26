@@ -113,8 +113,8 @@ namespace GalleryProject.Model
             // Skapar och initierar ett anslutningsobjekt.
             using (SqlConnection conn = CreateConnection())
             {
-                //try
-                //{
+               try
+               {
                     //läser av proceduren och spara ner den
                     SqlCommand cmd = new SqlCommand("AppSchema.usp_InsertComment", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -130,11 +130,11 @@ namespace GalleryProject.Model
 
                     comment.CommentID = (int)cmd.Parameters["@CommentID"].Value;
 
-            //    }
-            //    catch
-            //    {
-            //        throw new ApplicationException("An error occured in the data access layer when trying to comment");
-            //    }
+            }
+            catch
+            {
+                 throw new ApplicationException("An error occured in the data access layer when trying to comment");
+            }
             }
         }
         public void DeleteComment(int commentID)

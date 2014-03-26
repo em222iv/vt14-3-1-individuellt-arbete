@@ -22,7 +22,7 @@ namespace GalleryProject.Model
         {//sätter värdet på sökväg och regex variablerna.
             ApprovedExenstions = new Regex(@"^.*\.(gif|jpg|png)$", RegexOptions.IgnoreCase);
             PhysicalUploadedImagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images");
-            PhysicalUploadedThumbnailPath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images/thumbImg");
+            PhysicalUploadedThumbnailPath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images\\thumbImg");
         }
 
         bool ImageExist(string PictureName)
@@ -42,7 +42,7 @@ namespace GalleryProject.Model
             var noExtension = Path.GetFileNameWithoutExtension(fileName);
             //sparar undan bildformatet
             var Extension = Path.GetExtension(fileName);
-            
+
             //sparar udan bilden i imagevariablen
             var image = System.Drawing.Image.FromStream(stream);
 
@@ -84,9 +84,47 @@ namespace GalleryProject.Model
             //sätter parametern PictureNames värde till den inlangda bildens värde för att kunna spara undan det i databasen
             picture.PictureName = PictureFullName;
 
-
             return fileName;
+        }
+        public void DeletePicture(Picture picture)
+        {//tar emot filnamnet som ska tas bort
+            File.Delete(Path.Combine(PhysicalUploadedImagePath, picture.PictureName));
+            File.Delete(Path.Combine(PhysicalUploadedThumbnailPath, picture.PictureName));
+        }
+        //tar emot de tidigare bildnamnen från databsen
+        public void UpdatePicture(Picture picture, string oldImageName, string oldthumbImageName)
+        {
+            try
+            {
+                if (oldImageName != null)
+                {//skapar de nya bildnmanen som använder skrivit in
+                    var UpdatedImageName = Path.Combine(PhysicalUploadedImagePath, picture.PictureName);
+                    var UpdatedThumbImageName = Path.Combine(PhysicalUploadedThumbnailPath, picture.PictureName);
 
+                    int imageExistCount = 0;
+                    //särar på bildnamn och den typ
+                    var Extension = Path.GetExtension(picture.PictureName);
+                    var noExtension = Path.GetFileNameWithoutExtension(picture.PictureName);
+                    while (File.Exists(UpdatedImageName))
+                    {
+                        imageExistCount++;
+                        //sätter ihop en sökväg och bildnamn som ska vara unikt
+                        UpdatedImageName = string.Format("{0}\\{1}{2}{3}", PhysicalUploadedImagePath, noExtension, imageExistCount, Extension);
+                        UpdatedThumbImageName = string.Format("{0}\\{1}{2}{3}", PhysicalUploadedThumbnailPath, noExtension, imageExistCount, Extension);
+                        //sparar undan ett namn utan sökväg som ska va unikt och sätter detta som objektnamn
+                        var UpdatedDatabaseName = string.Format("{0}{1}{2}", noExtension, imageExistCount, Extension);
+                        picture.PictureName = UpdatedDatabaseName;
+                    }
+
+                    File.Move(oldImageName, UpdatedImageName);
+                    File.Move(oldthumbImageName, UpdatedThumbImageName);
+                }
+
+            }
+            catch
+            {
+                throw new ApplicationException("An error occured in the data access layer when trying to update picture");
+            }
         }
     }
 }

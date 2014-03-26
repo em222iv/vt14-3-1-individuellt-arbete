@@ -14,20 +14,22 @@
         DeleteMethod="CommentListView_DeleteItem"
         SelectMethod="CommentListView_GetData"
         DataKeyNames="CommentID"
-        InsertItemPosition="FirstItem">
+        InsertItemPosition="FirstItem" OnSelectedIndexChanged="GalleryConnectionString_SelectedIndexChanged">
         <LayoutTemplate>
             <%--visar columner för bilder och katerogi--%>
             <table class="grid">
                 <tr>
-                    <th>Comment
+                    <th>
+                        Comment
                     </th>
-                    <th>Commentator
+                    <th>
+                        Commentator
                     </th>
                 </tr>
                 <asp:PlaceHolder ID="itemPlaceholder" runat="server" />
             </table>
         </LayoutTemplate>
-        <ItemTemplate>
+        <ItemTemplate> 
             <%-- radar ut alla kommentarerna som tillhör bildID:et och knappar för att ta bort eller editera--%>
             <tr>
                 <td><%# Item.CommentInput %>
@@ -45,6 +47,7 @@
                 <td>
                     <%--visar textfält fär att lägga till kommentar och kommentatorsalias --%>
                     <%-- kommentern får max innehålla 300 tecken--%>
+                  <%-- Jag har föröskt att ändra storlek med columns på ett textfält men det funkar inte? kan asp css:en stoppa det?--%>
                     <asp:TextBox ID="CommentBox" runat="server" MaxLength="300" Text='<%# BindItem.CommentInput %>' ValidationGroup="InsertComment" />
                     <asp:RequiredFieldValidator ID="RequiredCommentValidator" runat="server" ErrorMessage="Please, write down your comment" ControlToValidate="CommentBox" ValidationGroup="InsertComment"></asp:RequiredFieldValidator>
                 </td>
