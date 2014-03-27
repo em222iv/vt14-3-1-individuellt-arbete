@@ -92,7 +92,7 @@ namespace GalleryProject.Model
             File.Delete(Path.Combine(PhysicalUploadedThumbnailPath, picture.PictureName));
         }
         //tar emot de tidigare bildnamnen från databsen
-        public void UpdatePicture(Picture picture, string oldImageName, string oldthumbImageName)
+        public void UpdatePicture(Picture picture, string oldImageName, string oldthumbImageName, int oldPictureID)
         {
             try
             {
@@ -105,15 +105,25 @@ namespace GalleryProject.Model
                     //särar på bildnamn och den typ
                     var Extension = Path.GetExtension(picture.PictureName);
                     var noExtension = Path.GetFileNameWithoutExtension(picture.PictureName);
-                    while (File.Exists(UpdatedImageName))
+                    var oldImageFullName = Path.GetFileName(oldthumbImageName);
+                    //försöker man spara ner samma namn på den bild man valt så godkänns det
+                    if (picture.PictureID == oldPictureID & picture.PictureName == oldImageFullName)
                     {
-                        imageExistCount++;
-                        //sätter ihop en sökväg och bildnamn som ska vara unikt
-                        UpdatedImageName = string.Format("{0}\\{1}{2}{3}", PhysicalUploadedImagePath, noExtension, imageExistCount, Extension);
-                        UpdatedThumbImageName = string.Format("{0}\\{1}{2}{3}", PhysicalUploadedThumbnailPath, noExtension, imageExistCount, Extension);
-                        //sparar undan ett namn utan sökväg som ska va unikt och sätter detta som objektnamn
-                        var UpdatedDatabaseName = string.Format("{0}{1}{2}", noExtension, imageExistCount, Extension);
-                        picture.PictureName = UpdatedDatabaseName;
+                        UpdatedImageName = string.Format("{0}\\{1}{2}", PhysicalUploadedImagePath, noExtension, Extension);
+                        UpdatedThumbImageName = string.Format("{0}\\{1}{2}", PhysicalUploadedThumbnailPath, noExtension, Extension);
+                    }
+                    else
+                    {//försöker man byta till samma namn på en annan bild som redan finns så ges bilden ett unikt namn på samma sätt som när ny bild laddas upp
+                        while (File.Exists(UpdatedImageName))
+                        {
+                            imageExistCount++;
+                            //sätter ihop en sökväg och bildnamn som ska vara unikt
+                            UpdatedImageName = string.Format("{0}\\{1}{2}{3}", PhysicalUploadedImagePath, noExtension, imageExistCount, Extension);
+                            UpdatedThumbImageName = string.Format("{0}\\{1}{2}{3}", PhysicalUploadedThumbnailPath, noExtension, imageExistCount, Extension);
+                            //sparar undan ett namn utan sökväg som ska va unikt och sätter detta som objektnamn
+                            var UpdatedDatabaseName = string.Format("{0}{1}{2}", noExtension, imageExistCount, Extension);
+                            picture.PictureName = UpdatedDatabaseName;
+                        }
                     }
 
                     File.Move(oldImageName, UpdatedImageName);

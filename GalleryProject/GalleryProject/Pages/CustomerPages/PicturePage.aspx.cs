@@ -42,8 +42,9 @@ namespace GalleryProject.Pages.CustomerPages
                     var filename = fileBrowse.FileName;
                     string oldImageName = "";
                     string oldthumbImageName = "";
+                    int oldPictureID = 0;
                     // skickar vidare dessa till serviceklassens savepiture
-                    Service.SavePicture(picture, file, filename, oldImageName, oldthumbImageName);
+                    Service.SavePicture(picture, file, filename, oldImageName, oldthumbImageName, oldPictureID);
                     //aktiverer en session som säger att bilden har lagt upp till användaren
                     //uppdaterar sidan för att se att den nya bilden sparats
                     Page.SetTempData("Confirmation", "The picture has been added");
@@ -63,12 +64,13 @@ namespace GalleryProject.Pages.CustomerPages
             var imagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images");
             var ThumbImagePath = Path.Combine(AppDomain.CurrentDomain.GetData("APPBASE").ToString(), "Images\\thumbImg");
 
-            //try
-            //{
+            try
+            {
                 //hämtar bildens nuvarande namn från databasen och sparar ner den i oldimagename. samma med thumbnail
                 var picture = Service.GetPicture(pictureID);
                 string oldImageName = Path.Combine(imagePath, picture.PictureName);
                 string oldthumbImageName = Path.Combine(ThumbImagePath, picture.PictureName);
+                int oldPictureID = picture.PictureID;
                
 
                 if (picture == null)
@@ -85,16 +87,16 @@ namespace GalleryProject.Pages.CustomerPages
                     var file = fileBrowse.FileContent;
                     var filename = fileBrowse.FileName;
                     //skickar vidare filväden och picureobjektes referensen till serviceklassen för att sparas tillsammans med fil och file
-                    Service.SavePicture(picture, file, filename, oldImageName, oldthumbImageName);
+                    Service.SavePicture(picture, file, filename, oldImageName, oldthumbImageName, oldPictureID);
                     //visar success meddelande, uppdaterar sidan
                     Page.SetTempData("Confirmation", "The picture has been edited");
                     Response.Redirect("~/Pages/CustomerPages/PicturePage.aspx");
                 }
-            //}
-            //catch (Exception)
-            //{
-            //    ModelState.AddModelError(String.Empty, "An error occured when trying to edit picture");
-            //}
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError(String.Empty, "An error occured when trying to edit picture");
+            }
         }
         public void PictureListView_DeleteItem(int pictureID)
         {

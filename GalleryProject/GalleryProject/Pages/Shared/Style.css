@@ -7,8 +7,9 @@
 #fileBrowser {
     border:1px solid black;
 }
-ContentPlaceHolder1 {
+#PictureContainerTd {
     background-color:black;
     max-height:700px;
+    max-width:1000px;
     overflow:scroll;
 }

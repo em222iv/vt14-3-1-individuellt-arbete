@@ -89,7 +89,7 @@ namespace GalleryProject.Model
 
                     Pictures.TrimExcess();
 
-                    // Returnerar referensen till List-objektet med referenser med Customer-objekt.
+                    // Returnerar referensen till List-objektet med referenser med pictures-objekt.
                     return Pictures;
                 }
                 catch
@@ -158,7 +158,6 @@ namespace GalleryProject.Model
                     SqlCommand cmd = new SqlCommand("AppSchema.usp_UpdatePicture", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
                     //picture.PictureName har ändrats till den uppdaterade namnet och skickar detta till databasen
-                    //databsen tar fortfarande bara unika namn då jag valt att validera namn på detta sätt. allt får ett unikt namn.
                     cmd.Parameters.Add("@PictureID", SqlDbType.Int).Value = picture.PictureID;
                     cmd.Parameters.Add("@PictureName", SqlDbType.VarChar, 30).Value = picture.PictureName;
                     cmd.Parameters.Add("@CategoryID", SqlDbType.Int).Value = picture.CategoryID;

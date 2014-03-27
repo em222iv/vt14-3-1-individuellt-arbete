@@ -14,7 +14,7 @@
         DeleteMethod="CommentListView_DeleteItem"
         SelectMethod="CommentListView_GetData"
         DataKeyNames="CommentID"
-        InsertItemPosition="FirstItem" OnSelectedIndexChanged="GalleryConnectionString_SelectedIndexChanged">
+        InsertItemPosition="FirstItem">
         <LayoutTemplate>
             <%--visar columner för bilder och katerogi--%>
             <table class="grid">
@@ -58,7 +58,7 @@
                 </td>
                 <td>
                     <%--  knapp för att lägga till kommentaren. --%>
-                    <asp:LinkButton ID="InsertButton" runat="server" CommandName="Insert" Text="Comment" ValidationGroup="InsertComment" OnClientClick="return confirm('Do you want to make this comment?')" /></div>
+                    <asp:LinkButton ID="InsertButton" runat="server" CommandName="Insert" Text="Comment" ValidationGroup="InsertComment" /></div>
                 </td>
                 <td>
                     <td>

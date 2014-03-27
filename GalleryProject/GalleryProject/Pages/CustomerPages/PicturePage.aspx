@@ -83,7 +83,7 @@
                 </td>
                 <td>
            <%--  Knapar för att läga till eller rensa textfältet för bilder--%>
-                    <asp:LinkButton ID="InsertButton" runat="server" CommandName="Insert" Text="Add" OnClientClick="return confirm('Do you want to add this picture?')" /></div>
+                    <asp:LinkButton ID="InsertButton" runat="server" CommandName="Insert" Text="Add"  /></div>
                     <asp:LinkButton ID="CleanTextButton" runat="server" CommandName="Cancel" Text="Clean" CausesValidation="false" />
 
                 </td>

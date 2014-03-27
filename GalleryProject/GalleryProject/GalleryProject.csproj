@@ -64,7 +64,6 @@
     <Content Include="packages.config" />
     <Content Include="Pages\CustomerPages\CommentPage.aspx" />
     <Content Include="Pages\CustomerPages\PicturePage.aspx" />
-    <Content Include="Pages\Shared\Error.html" />
     <None Include="Properties\PublishProfiles\em222iv.pubxml" />
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
     <Content Include="Pages\Shared\ASPNETStyle.css" />
